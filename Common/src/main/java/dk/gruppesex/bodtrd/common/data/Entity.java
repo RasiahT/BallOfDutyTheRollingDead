@@ -5,11 +5,29 @@
  */
 package dk.gruppesex.bodtrd.common.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * @author lucas
  */
 public class Entity
 {
+    private Map<Class<?>, Object> data = new HashMap<>();
 
+    public void add(Object data)
+    {
+        this.data.put(data.getClass(), data);
+    }
+
+    public void remove(Class<?> type)
+    {
+        this.data.remove(type);
+    }
+
+    public Object get(Class<?> type)
+    {
+        return data.get(type);
+    }
 }
