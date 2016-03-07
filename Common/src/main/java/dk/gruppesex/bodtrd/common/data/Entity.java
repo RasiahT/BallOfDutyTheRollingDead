@@ -7,6 +7,7 @@ package dk.gruppesex.bodtrd.common.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -15,6 +16,24 @@ import java.util.Map;
 public class Entity
 {
     private Map<Class<?>, Object> data = new HashMap<>();
+    private int _ID;
+    private static AtomicInteger _count = new AtomicInteger(0);
+    private EntityType _type;
+
+    public Entity()
+    {
+        _ID = _count.incrementAndGet();
+    }
+
+    public void setType(EntityType type)
+    {
+        this._type = type;
+    }
+
+    public EntityType getType()
+    {
+        return _type;
+    }
 
     public void add(Object data)
     {
@@ -29,5 +48,10 @@ public class Entity
     public Object get(Class<?> type)
     {
         return data.get(type);
+    }
+
+    public int getID()
+    {
+        return _ID;
     }
 }
