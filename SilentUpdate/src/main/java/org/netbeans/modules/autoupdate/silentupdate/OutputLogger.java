@@ -9,7 +9,8 @@ import org.openide.windows.InputOutput;
 /**
  *
  */
-public final class OutputLogger {
+public final class OutputLogger
+{
 
     // to log all messages for whole package
     private static final Logger LOGGER = Logger.getLogger(OutputLogger.class.getPackage().getName());
@@ -17,7 +18,8 @@ public final class OutputLogger {
     private static final String OUTPUT_LOGGER_NAME = "Updating Application"; // NOI18N
     private static InputOutput io;
 
-    private enum Grain {
+    private enum Grain
+    {
 
         VERBOSE,
         WINDOW,
@@ -26,13 +28,18 @@ public final class OutputLogger {
     }
     private static final Grain DEFAULT = Grain.LOG;
 
-    private static Grain grain() {
-        if (grain == null) {
+    private static Grain grain()
+    {
+        if (grain == null)
+        {
             String s = NbBundle.getBundle("org.netbeans.modules.autoupdate.silentupdate.resources.Bundle").getString("OutputLogger.Grain");
             grain = DEFAULT;
-            try {
+            try
+            {
                 grain = Grain.valueOf(s);
-            } catch (IllegalArgumentException x) {
+            }
+            catch (IllegalArgumentException x)
+            {
                 LOGGER.info(s);
             }
         }
@@ -40,58 +47,81 @@ public final class OutputLogger {
         return grain;
     }
 
-    public static void log(String msg, Throwable... x) {
+    public static void log(String msg, Throwable... x)
+    {
         log(Level.INFO, msg, x);
     }
 
     @SuppressWarnings("fallthrough")
-    public static void log(Level l, String msg, Throwable... x) {
-        switch (grain()) {
+    public static void log(Level l, String msg, Throwable... x)
+    {
+        switch (grain())
+        {
             case VERBOSE:
-                if (x == null) {
+                if (x == null)
+                {
                     LOGGER.log(Level.INFO, msg);
-                } else {
+                }
+                else
+                {
                     LOGGER.log(Level.INFO, msg);
-                    for (Throwable t : x) {
+                    for (Throwable t : x)
+                    {
                         LOGGER.log(Level.INFO, msg, t);
                     }
                 }
                 break;
             case WINDOW:
-                try {
+                try
+                {
                     InputOutput output = getIO();
-                    if (x == null) {
+                    if (x == null)
+                    {
                         output.getOut().println(msg);
                         output.getOut().close();
-                    } else {
+                    }
+                    else
+                    {
                         output.getErr().println(msg);
-                        for (Throwable t : x) {
+                        for (Throwable t : x)
+                        {
                             output.getErr().println(t);
                         }
                         output.getErr().close();
                     }
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     LOGGER.log(Level.INFO, ex.getLocalizedMessage(), ex);
                 }
             // use LOGGER for these message too
             case LOG:
-                if (LOGGER.isLoggable(l)) {
-                    if (x == null) {
+                if (LOGGER.isLoggable(l))
+                {
+                    if (x == null)
+                    {
                         LOGGER.log(l, msg);
-                    } else {
+                    }
+                    else
+                    {
                         LOGGER.log(l, msg);
-                        for (Throwable t : x) {
+                        for (Throwable t : x)
+                        {
                             LOGGER.log(l, msg, t);
                         }
                     }
                 }
                 break;
             case SILENT:
-                if (x == null) {
+                if (x == null)
+                {
                     LOGGER.log(Level.FINEST, msg);
-                } else {
+                }
+                else
+                {
                     LOGGER.log(Level.FINEST, msg);
-                    for (Throwable t : x) {
+                    for (Throwable t : x)
+                    {
                         LOGGER.log(Level.FINEST, msg, t);
                     }
                 }
@@ -101,8 +131,10 @@ public final class OutputLogger {
         }
     }
 
-    private static synchronized InputOutput getIO() {
-        if (io == null) {
+    private static synchronized InputOutput getIO()
+    {
+        if (io == null)
+        {
             io = IOProvider.getDefault().getIO(OUTPUT_LOGGER_NAME, true);
         }
         return io;

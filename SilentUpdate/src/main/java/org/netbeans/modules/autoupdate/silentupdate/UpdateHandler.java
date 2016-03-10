@@ -22,36 +22,44 @@ import org.openide.util.NbBundle;
 /**
  *
  */
-public final class UpdateHandler {
+public final class UpdateHandler
+{
 
     public static final String SILENT_UC_CODE_NAME = "org_netbeans_modules_autoupdate_silentupdate_update_center"; // NOI18N
 
-    public static boolean timeToCheck() {
+    public static boolean timeToCheck()
+    {
         // every startup
         return true;
     }
 
-    public static class UpdateHandlerException extends Exception {
+    public static class UpdateHandlerException extends Exception
+    {
 
-        public UpdateHandlerException(String msg) {
+        public UpdateHandlerException(String msg)
+        {
             super(msg);
         }
 
-        public UpdateHandlerException(String msg, Throwable th) {
+        public UpdateHandlerException(String msg, Throwable th)
+        {
             super(msg, th);
         }
     }
 
-    public static void checkAndHandleUpdates() {
+    public static void checkAndHandleUpdates()
+    {
         // refresh silent update center first
         refreshSilentUpdateProvider();
 
         Collection<UpdateElement> updates = findUpdates();
         Collection<UpdateElement> available = Collections.emptySet();
-        if (installNewModules()) {
+        if (installNewModules())
+        {
             available = findNewModules();
         }
-        if (updates.isEmpty() && available.isEmpty()) {
+        if (updates.isEmpty() && available.isEmpty())
+        {
             // none for install
             OutputLogger.log("None for install");
             return;
@@ -59,11 +67,15 @@ public final class UpdateHandler {
 
         // create a container for install
         OperationContainer<InstallSupport> containerForInstall = feedContainer(available, false);
-        if (containerForInstall != null) {
-            try {
+        if (containerForInstall != null)
+        {
+            try
+            {
                 handleInstall(containerForInstall);
                 OutputLogger.log("Install new modules done.");
-            } catch (UpdateHandlerException ex) {
+            }
+            catch (UpdateHandlerException ex)
+            {
                 OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
                 return;
             }
@@ -71,11 +83,15 @@ public final class UpdateHandler {
 
         // create a container for update
         OperationContainer<InstallSupport> containerForUpdate = feedContainer(updates, true);
-        if (containerForUpdate != null) {
-            try {
+        if (containerForUpdate != null)
+        {
+            try
+            {
                 handleInstall(containerForUpdate);
                 OutputLogger.log("Update done.");
-            } catch (UpdateHandlerException ex) {
+            }
+            catch (UpdateHandlerException ex)
+            {
                 OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
                 return;
             }
@@ -83,19 +99,24 @@ public final class UpdateHandler {
 
     }
 
-    public static boolean isLicenseApproved(String license) {
+    public static boolean isLicenseApproved(String license)
+    {
         // place your code there
         return true;
     }
 
     // package private methods
-    static Collection<UpdateElement> findUpdates() {
+    static Collection<UpdateElement> findUpdates()
+    {
         // check updates
         Collection<UpdateElement> elements4update = new HashSet<UpdateElement>();
         List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
-        for (UpdateUnit unit : updateUnits) {
-            if (unit.getInstalled() != null) { // means the plugin already installed
-                if (!unit.getAvailableUpdates().isEmpty()) { // has updates
+        for (UpdateUnit unit : updateUnits)
+        {
+            if (unit.getInstalled() != null)
+            { // means the plugin already installed
+                if (!unit.getAvailableUpdates().isEmpty())
+                { // has updates
                     elements4update.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
                 }
             }
@@ -103,9 +124,11 @@ public final class UpdateHandler {
         return elements4update;
     }
 
-    static void handleInstall(OperationContainer<InstallSupport> container) throws UpdateHandlerException {
+    static void handleInstall(OperationContainer<InstallSupport> container) throws UpdateHandlerException
+    {
         // check licenses
-        if (!allLicensesApproved(container)) {
+        if (!allLicensesApproved(container))
+        {
             // have a problem => cannot continue
             throw new UpdateHandlerException("Cannot continue because license approval is missing for some updates.");
         }
@@ -113,35 +136,46 @@ public final class UpdateHandler {
         // download
         InstallSupport support = container.getSupport();
         Validator v = null;
-        try {
+        try
+        {
             v = doDownload(support);
-        } catch (OperationException ex) {
+        }
+        catch (OperationException ex)
+        {
             // caught a exception
             throw new UpdateHandlerException("A problem caught while downloading, cause: ", ex);
         }
-        if (v == null) {
+        if (v == null)
+        {
             // have a problem => cannot continue
             throw new UpdateHandlerException("Missing Update Validator => cannot continue.");
         }
 
         // verify
         Installer i = null;
-        try {
+        try
+        {
             i = doVerify(support, v);
-        } catch (OperationException ex) {
+        }
+        catch (OperationException ex)
+        {
             // caught a exception
             throw new UpdateHandlerException("A problem caught while verification of updates, cause: ", ex);
         }
-        if (i == null) {
+        if (i == null)
+        {
             // have a problem => cannot continue
             throw new UpdateHandlerException("Missing Update Installer => cannot continue.");
         }
 
         // install
         Restarter r = null;
-        try {
+        try
+        {
             r = doInstall(support, i);
-        } catch (OperationException ex) {
+        }
+        catch (OperationException ex)
+        {
             // caught a exception
             throw new UpdateHandlerException("A problem caught while installation of updates, cause: ", ex);
         }
@@ -151,13 +185,17 @@ public final class UpdateHandler {
         return;
     }
 
-    static Collection<UpdateElement> findNewModules() {
+    static Collection<UpdateElement> findNewModules()
+    {
         // check updates
         Collection<UpdateElement> elements4install = new HashSet<UpdateElement>();
         List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
-        for (UpdateUnit unit : updateUnits) {
-            if (unit.getInstalled() == null) { // means the plugin is not installed yet
-                if (!unit.getAvailableUpdates().isEmpty()) { // is available
+        for (UpdateUnit unit : updateUnits)
+        {
+            if (unit.getInstalled() == null)
+            { // means the plugin is not installed yet
+                if (!unit.getAvailableUpdates().isEmpty())
+                { // is available
                     elements4install.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
                 }
             }
@@ -165,28 +203,39 @@ public final class UpdateHandler {
         return elements4install;
     }
 
-    static void refreshSilentUpdateProvider() {
+    static void refreshSilentUpdateProvider()
+    {
         UpdateUnitProvider silentUpdateProvider = getSilentUpdateProvider();
-        if (silentUpdateProvider == null) {
+        if (silentUpdateProvider == null)
+        {
             // have a problem => cannot continue
             OutputLogger.log("Missing Silent Update Provider => cannot continue.");
             return;
         }
-        try {
+        try
+        {
             silentUpdateProvider.refresh(null, true);
-        } catch (IOException ex) {
+        }
+        catch (IOException ex)
+        {
             // caught a exception
             OutputLogger.log("A problem caught while refreshing Update Centers, cause: ", ex);
         }
     }
 
-    static UpdateUnitProvider getSilentUpdateProvider() {
+    static UpdateUnitProvider getSilentUpdateProvider()
+    {
         List<UpdateUnitProvider> providers = UpdateUnitProviderFactory.getDefault().getUpdateUnitProviders(true);
-        for (UpdateUnitProvider p : providers) {
-            if (SILENT_UC_CODE_NAME.equals(p.getName())) {
-                try {
+        for (UpdateUnitProvider p : providers)
+        {
+            if (SILENT_UC_CODE_NAME.equals(p.getName()))
+            {
+                try
+                {
                     p.refresh(null, true);
-                } catch (IOException ex) {
+                }
+                catch (IOException ex)
+                {
                     // caught a exception
                     OutputLogger.log("A problem caught while refreshing Update Centers, cause: ", ex);
                 }
@@ -196,28 +245,37 @@ public final class UpdateHandler {
         return null;
     }
 
-    static OperationContainer<InstallSupport> feedContainer(Collection<UpdateElement> updates, boolean update) {
-        if (updates == null || updates.isEmpty()) {
+    static OperationContainer<InstallSupport> feedContainer(Collection<UpdateElement> updates, boolean update)
+    {
+        if (updates == null || updates.isEmpty())
+        {
             return null;
         }
         // create a container for update
         OperationContainer<InstallSupport> container;
-        if (update) {
+        if (update)
+        {
             container = OperationContainer.createForUpdate();
-        } else {
+        }
+        else
+        {
             container = OperationContainer.createForInstall();
         }
 
         // loop all updates and add to container for update
-        for (UpdateElement ue : updates) {
-            if (container.canBeAdded(ue.getUpdateUnit(), ue)) {
+        for (UpdateElement ue : updates)
+        {
+            if (container.canBeAdded(ue.getUpdateUnit(), ue))
+            {
                 OutputLogger.log("Update found: " + ue);
                 OperationInfo<InstallSupport> operationInfo = container.add(ue);
-                if (operationInfo == null) {
+                if (operationInfo == null)
+                {
                     continue;
                 }
                 container.add(operationInfo.getRequiredElements());
-                if (!operationInfo.getBrokenDependencies().isEmpty()) {
+                if (!operationInfo.getBrokenDependencies().isEmpty())
+                {
                     // have a problem => cannot continue
                     OutputLogger.log("There are broken dependencies => cannot continue, broken deps: " + operationInfo.getBrokenDependencies());
                     return null;
@@ -227,24 +285,30 @@ public final class UpdateHandler {
         return container;
     }
 
-    static boolean allLicensesApproved(OperationContainer<InstallSupport> container) {
-        if (!container.listInvalid().isEmpty()) {
+    static boolean allLicensesApproved(OperationContainer<InstallSupport> container)
+    {
+        if (!container.listInvalid().isEmpty())
+        {
             return false;
         }
-        for (OperationInfo<InstallSupport> info : container.listAll()) {
+        for (OperationInfo<InstallSupport> info : container.listAll())
+        {
             String license = info.getUpdateElement().getLicence();
-            if (!isLicenseApproved(license)) {
+            if (!isLicenseApproved(license))
+            {
                 return false;
             }
         }
         return true;
     }
 
-    static Validator doDownload(InstallSupport support) throws OperationException {
+    static Validator doDownload(InstallSupport support) throws OperationException
+    {
         return support.doDownload(null, true);
     }
 
-    static Installer doVerify(InstallSupport support, Validator validator) throws OperationException {
+    static Installer doVerify(InstallSupport support, Validator validator) throws OperationException
+    {
 
         Installer installer = support.doValidate(validator, null); // validates all plugins are correctly downloaded
         // XXX: use there methods to make sure updates are signed and trusted
@@ -253,11 +317,13 @@ public final class UpdateHandler {
         return installer;
     }
 
-    static Restarter doInstall(InstallSupport support, Installer installer) throws OperationException {
+    static Restarter doInstall(InstallSupport support, Installer installer) throws OperationException
+    {
         return support.doInstall(installer, null);
     }
 
-    private static boolean installNewModules() {
+    private static boolean installNewModules()
+    {
         String s = NbBundle.getBundle("org.netbeans.modules.autoupdate.silentupdate.resources.Bundle").getString("UpdateHandler.NewModules");
         return Boolean.parseBoolean(s);
     }
