@@ -66,6 +66,7 @@
         <module>MouseInput</module>
         <module>PlayState</module>
         <module>MenuState</module>
+        <module>SilentUpdate</module>
     </modules>
 
     <properties>
