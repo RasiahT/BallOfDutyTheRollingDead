@@ -11,17 +11,37 @@ package dk.gruppesex.bodtrd.common.data.entityelements;
  */
 public class Velocity
 {
-    public double dx;
-    public double dy;
+    private double _dx;
+    private double _dy;
 
     public Velocity(double dx, double dy)
     {
-        this.dx = dx;
-        this.dy = dy;
+        this._dx = dx;
+        this._dy = dy;
     }
 
     public Velocity()
     {
+    }
+
+    public double getDx()
+    {
+        return _dx;
+    }
+
+    public void setDx(double dx)
+    {
+        this._dx = dx;
+    }
+
+    public double getDy()
+    {
+        return _dy;
+    }
+
+    public void setDy(double dy)
+    {
+        this._dy = dy;
     }
 
 }

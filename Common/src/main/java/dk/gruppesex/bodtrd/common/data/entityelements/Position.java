@@ -13,13 +13,32 @@ import java.io.Serializable;
  */
 public class Position implements Serializable
 {
-    public double x;
-    public double y;
+    private double _x;
+    private double _y;
 
     public Position(double x, double y)
     {
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
     }
 
+    public double getX()
+    {
+        return _x;
+    }
+
+    public void setX(double x)
+    {
+        this._x = x;
+    }
+
+    public double getY()
+    {
+        return _y;
+    }
+
+    public void setY(double y)
+    {
+        this._y = y;
+    }
 }

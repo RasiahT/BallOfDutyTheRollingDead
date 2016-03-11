@@ -9,6 +9,7 @@ import dk.gruppesex.bodtrd.common.data.Entity;
 import dk.gruppesex.bodtrd.common.data.GameData;
 import dk.gruppesex.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppesex.bodtrd.common.services.GamePluginSPI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,15 +19,26 @@ import java.util.Map;
  */
 public class MapPlugin implements GamePluginSPI
 {
+    private java.util.Map<Integer, Entity> _world;
+    private ArrayList<Entity> _walls;
+
     @Override
     public void stop()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (Entity wall : _walls)
+        {
+            _world.remove(wall.getID(), wall);
+        }
     }
 
     @Override
     public void start(GameData gameData, Map<Integer, Entity> world, List<IEntityProcessor> processors)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this._world = world;
+        MapGenerator.GenerateMap(_walls, gameData);
+        for (Entity wall : _walls)
+        {
+            world.put(wall.getID(), wall);
+        }
     }
 }

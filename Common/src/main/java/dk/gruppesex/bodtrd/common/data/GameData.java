@@ -11,5 +11,22 @@ package dk.gruppesex.bodtrd.common.data;
  */
 public class GameData
 {
+    private int _mapWidth;
+    private int _mapHeight;
+
+    public GameData()
+    {
+
+    }
+
+    public int getWidth()
+    {
+        return _mapWidth;
+    }
+
+    public int getHeight()
+    {
+        return _mapHeight;
+    }
 
 }
