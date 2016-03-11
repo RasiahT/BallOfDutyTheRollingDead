@@ -1,6 +1,7 @@
 package dk.gruppesex.bodtrd.player;
 
 import dk.gruppesex.bodtrd.common.data.Entity;
+import dk.gruppesex.bodtrd.common.data.EntityType;
 import dk.gruppesex.bodtrd.common.data.GameData;
 import dk.gruppesex.bodtrd.common.data.entityelements.Position;
 import dk.gruppesex.bodtrd.common.data.entityelements.Velocity;
@@ -29,9 +30,7 @@ public class PlayerPlugin implements GamePluginSPI
         _world = world;
         _processors = processors;
 
-        _entity = new Entity();
-        _entity.add(new Position(0, 0));
-        _entity.add(new Velocity());
+        _entity = createPlayerEntity();
         world.put(_entity.getID(), _entity);
 
         _processor = new PlayerProcessor(_entity);
@@ -43,6 +42,15 @@ public class PlayerPlugin implements GamePluginSPI
     {
         _processors.remove(_processor);
         _world.remove(_entity.getID());
+    }
+
+    private Entity createPlayerEntity()
+    {
+        Entity entity = new Entity();
+        entity.setType(EntityType.PLAYER);
+        entity.add(new Position(0, 0));
+        entity.add(new Velocity());
+        return entity;
     }
 
 }
