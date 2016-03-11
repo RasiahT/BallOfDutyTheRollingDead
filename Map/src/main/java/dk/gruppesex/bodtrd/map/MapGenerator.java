@@ -31,8 +31,8 @@ public class MapGenerator
 
     public static void GenerateMap(ArrayList<Entity> walls, GameData gameData)
     {
-        int mapWidth = gameData.getWidth();
-        int mapHeight = gameData.getHeight();
+        int mapWidth = gameData.getMapWidth();
+        int mapHeight = gameData.getMapHeight();
         int mapGridX = mapWidth / _wallSize;
         int mapGridY = mapHeight / _wallSize;
 

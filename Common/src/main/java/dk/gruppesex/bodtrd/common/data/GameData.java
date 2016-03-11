@@ -19,12 +19,12 @@ public class GameData
 
     }
 
-    public int getWidth()
+    public int getMapWidth()
     {
         return _mapWidth;
     }
 
-    public int getHeight()
+    public int getMapHeight()
     {
         return _mapHeight;
     }
