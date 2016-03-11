@@ -26,3 +26,8 @@ nb-configuration.xml
 /GameEngine/target/
 /Common/target/
 /Engine/target/
+/SilentUpdate/target/
+/suite1/nbproject/private/
+/mavenproject1/ModuleBuilder/target/
+/ModuleBuilder/ModuleBuilder/target/
+/ModuleBuilder/target/

@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Install: dk/gruppesex/bodtrd/gameengine/Installer.class
-OpenIDE-Module-Localizing-Bundle: dk/gruppesex/bodtrd/gameengine/Bundle.properties
+OpenIDE-Module-Install: dk/gruppesex/bodtrd/engine/Installer.class
+OpenIDE-Module-Localizing-Bundle: dk/gruppesex/bodtrd/engine/Bundle.properties
 

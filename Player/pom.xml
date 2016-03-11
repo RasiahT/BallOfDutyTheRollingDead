@@ -46,11 +46,6 @@
             <artifactId>org-openide-util-ui</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>Input</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
