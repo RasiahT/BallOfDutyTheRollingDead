@@ -60,13 +60,7 @@
         <module>Common</module>
         <module>Player</module>
         <module>Map</module>
-        <module>GameEngine</module>
-        <module>Input</module>
-        <module>KeyboardInput</module>
-        <module>MouseInput</module>
-        <module>PlayState</module>
-        <module>MenuState</module>
-        <module>SilentUpdate</module>
+        <module>Engine</module>
     </modules>
 
     <properties>

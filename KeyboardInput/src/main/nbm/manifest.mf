@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module-Install: dk/gruppesex/bodtrd/keyboardinput/Installer.class
-OpenIDE-Module-Localizing-Bundle: dk/gruppesex/bodtrd/keyboardinput/Bundle.properties
-

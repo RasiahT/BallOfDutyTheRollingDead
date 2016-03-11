@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
 import org.netbeans.api.autoupdate.InstallSupport;
 import org.netbeans.api.autoupdate.InstallSupport.Installer;
 import org.netbeans.api.autoupdate.InstallSupport.Validator;
@@ -20,11 +21,11 @@ import org.netbeans.api.autoupdate.UpdateUnitProviderFactory;
 import org.openide.util.NbBundle;
 
 /**
- *
+ * @author https://github.com/corfixen
+ * Modified to meet the requirements and standard for Ball of Duty the Rolling Dead.
  */
 public final class UpdateHandler
 {
-
     public static final String SILENT_UC_CODE_NAME = "org_netbeans_modules_autoupdate_silentupdate_update_center"; // NOI18N
 
     public static boolean timeToCheck()
@@ -35,7 +36,6 @@ public final class UpdateHandler
 
     public static class UpdateHandlerException extends Exception
     {
-
         public UpdateHandlerException(String msg)
         {
             super(msg);
@@ -52,11 +52,17 @@ public final class UpdateHandler
         // refresh silent update center first
         refreshSilentUpdateProvider();
 
-        Collection<UpdateElement> updates = findUpdates();
+        Collection<UpdateElement> updates = findUpdates((updateElement) ->
+                {
+                    return updateElement != null;
+                });
         Collection<UpdateElement> available = Collections.emptySet();
         if (installNewModules())
         {
-            available = findNewModules();
+            available = findUpdates((updateElement) ->
+                    {
+                        return updateElement == null;
+                    });
         }
         if (updates.isEmpty() && available.isEmpty())
         {
@@ -67,36 +73,29 @@ public final class UpdateHandler
 
         // create a container for install
         OperationContainer<InstallSupport> containerForInstall = feedContainer(available, false);
-        if (containerForInstall != null)
+        try
         {
-            try
-            {
-                handleInstall(containerForInstall);
-                OutputLogger.log("Install new modules done.");
-            }
-            catch (UpdateHandlerException ex)
-            {
-                OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
-                return;
-            }
+            handleInstall(containerForInstall);
+            OutputLogger.log("Install new modules done.");
+        }
+        catch (UpdateHandlerException ex)
+        {
+            OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
+            return;
         }
 
         // create a container for update
         OperationContainer<InstallSupport> containerForUpdate = feedContainer(updates, true);
-        if (containerForUpdate != null)
+        try
         {
-            try
-            {
-                handleInstall(containerForUpdate);
-                OutputLogger.log("Update done.");
-            }
-            catch (UpdateHandlerException ex)
-            {
-                OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
-                return;
-            }
+            handleInstall(containerForUpdate);
+            OutputLogger.log("Update done.");
         }
-
+        catch (UpdateHandlerException ex)
+        {
+            OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
+            return;
+        }
     }
 
     public static boolean isLicenseApproved(String license)
@@ -106,14 +105,14 @@ public final class UpdateHandler
     }
 
     // package private methods
-    static Collection<UpdateElement> findUpdates()
+    static Collection<UpdateElement> findUpdates(Function<UpdateElement, Boolean> predicate)
     {
         // check updates
-        Collection<UpdateElement> elements4update = new HashSet<UpdateElement>();
+        Collection<UpdateElement> elements4update = new HashSet<>();
         List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
         for (UpdateUnit unit : updateUnits)
         {
-            if (unit.getInstalled() != null)
+            if (predicate.apply(unit.getInstalled()))
             { // means the plugin already installed
                 if (!unit.getAvailableUpdates().isEmpty())
                 { // has updates
@@ -138,7 +137,7 @@ public final class UpdateHandler
         Validator v = null;
         try
         {
-            v = doDownload(support);
+            v = support.doDownload(null, true, false);
         }
         catch (OperationException ex)
         {
@@ -172,7 +171,7 @@ public final class UpdateHandler
         Restarter r = null;
         try
         {
-            r = doInstall(support, i);
+            r = support.doInstall(i, null);
         }
         catch (OperationException ex)
         {
@@ -182,25 +181,6 @@ public final class UpdateHandler
 
         // restart later
         support.doRestartLater(r);
-        return;
-    }
-
-    static Collection<UpdateElement> findNewModules()
-    {
-        // check updates
-        Collection<UpdateElement> elements4install = new HashSet<UpdateElement>();
-        List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
-        for (UpdateUnit unit : updateUnits)
-        {
-            if (unit.getInstalled() == null)
-            { // means the plugin is not installed yet
-                if (!unit.getAvailableUpdates().isEmpty())
-                { // is available
-                    elements4install.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
-                }
-            }
-        }
-        return elements4install;
     }
 
     static void refreshSilentUpdateProvider()
@@ -210,16 +190,6 @@ public final class UpdateHandler
         {
             // have a problem => cannot continue
             OutputLogger.log("Missing Silent Update Provider => cannot continue.");
-            return;
-        }
-        try
-        {
-            silentUpdateProvider.refresh(null, true);
-        }
-        catch (IOException ex)
-        {
-            // caught a exception
-            OutputLogger.log("A problem caught while refreshing Update Centers, cause: ", ex);
         }
     }
 
@@ -247,7 +217,7 @@ public final class UpdateHandler
 
     static OperationContainer<InstallSupport> feedContainer(Collection<UpdateElement> updates, boolean update)
     {
-        if (updates == null || updates.isEmpty())
+        if (updates.isEmpty())
         {
             return null;
         }
@@ -269,17 +239,21 @@ public final class UpdateHandler
             {
                 OutputLogger.log("Update found: " + ue);
                 OperationInfo<InstallSupport> operationInfo = container.add(ue);
+
                 if (operationInfo == null)
                 {
                     continue;
                 }
-                container.add(operationInfo.getRequiredElements());
+
                 if (!operationInfo.getBrokenDependencies().isEmpty())
                 {
                     // have a problem => cannot continue
+                    container.remove(ue);
                     OutputLogger.log("There are broken dependencies => cannot continue, broken deps: " + operationInfo.getBrokenDependencies());
-                    return null;
+                    continue;
                 }
+
+                container.add(operationInfo.getRequiredElements());
             }
         }
         return container;
@@ -302,11 +276,6 @@ public final class UpdateHandler
         return true;
     }
 
-    static Validator doDownload(InstallSupport support) throws OperationException
-    {
-        return support.doDownload(null, true);
-    }
-
     static Installer doVerify(InstallSupport support, Validator validator) throws OperationException
     {
 
@@ -315,11 +284,6 @@ public final class UpdateHandler
         // installSupport.isSigned(installer, <an update element>);
         // installSupport.isTrusted(installer, <an update element>);
         return installer;
-    }
-
-    static Restarter doInstall(InstallSupport support, Installer installer) throws OperationException
-    {
-        return support.doInstall(installer, null);
     }
 
     private static boolean installNewModules()

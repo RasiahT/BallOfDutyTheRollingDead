@@ -45,9 +45,9 @@ public class Entity
         this.data.remove(type);
     }
 
-    public Object get(Class<?> type)
+    public <T> T get(Class<T> type)
     {
-        return data.get(type);
+        return (T)data.get(type);
     }
 
     public int getID()
