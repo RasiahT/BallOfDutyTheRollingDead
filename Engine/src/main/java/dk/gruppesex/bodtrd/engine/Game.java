@@ -34,6 +34,7 @@ public class Game implements ApplicationListener
     private Map<Integer, Entity> world = new ConcurrentHashMap<>();
     private List<GamePluginSPI> gamePlugins;
 
+    @Override
     public void create()
     {
         gameData.setDisplayWidth(Gdx.graphics.getWidth());

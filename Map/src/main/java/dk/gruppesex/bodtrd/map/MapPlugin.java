@@ -11,11 +11,13 @@ import dk.gruppesex.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppesex.bodtrd.common.services.GamePluginSPI;
 import java.util.List;
 import java.util.Map;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author lucas
  */
+@ServiceProvider(service = GamePluginSPI.class)
 public class MapPlugin implements GamePluginSPI
 {
     private Map<Integer, Entity> _world;

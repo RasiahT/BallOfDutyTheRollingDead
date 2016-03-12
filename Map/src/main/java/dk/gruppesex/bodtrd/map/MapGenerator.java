@@ -19,7 +19,6 @@ import java.util.Random;
  */
 public class MapGenerator
 {
-
     private static Random _rand = new Random(); // TODO needs to be able to pick seed
     private static int _wallAmount = 50;
     private static int _wallSize = 50;
@@ -149,7 +148,8 @@ public class MapGenerator
         Entity wall = new Entity();
         wall.setType(EntityType.WALL);
 
-        wall.add(pos);
+        // Position is pass by reference and thus we must copy its values. Otherwise all Walls will have the same position.
+        wall.add(new Position(pos.getX(), pos.getY()));
         wall.add(new Body(_wallSize));
 
         return wall;

@@ -9,11 +9,13 @@ import dk.gruppesex.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppesex.bodtrd.common.services.GamePluginSPI;
 import java.util.List;
 import java.util.Map;
+import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author lucas
  */
+@ServiceProvider(service = GamePluginSPI.class)
 public class PlayerPlugin implements GamePluginSPI
 {
     private Entity _entity;
