@@ -5,6 +5,8 @@
  */
 package dk.gruppesex.bodtrd.common.data;
 
+import dk.gruppesex.bodtrd.common.data.entityelements.Position;
+
 /**
  *
  * @author Morten
@@ -14,44 +16,52 @@ public class GameData
     private int _mapWidth;
     private int _mapHeight;
 
-    private int displayWidth;
+    private int _displayWidth;
+    private int _displayHeight;
+
+    private double _deltaTime;
+    private GameState _gameState;
+
+    private Position _playerPosition;
+
+    public Position getPlayerPosition()
+    {
+        return _playerPosition;
+    }
+
+    public void setPlayerPosition(Position position)
+    {
+        this._playerPosition = position;
+    }
 
     public int getDisplayWidth()
     {
-        return displayWidth;
+        return _displayWidth;
     }
 
     public void setDisplayWidth(int displayWidth)
     {
-        this.displayWidth = displayWidth;
+        this._displayWidth = displayWidth;
     }
 
     public int getDisplayHeight()
     {
-        return displayHeight;
+        return _displayHeight;
     }
 
     public void setDisplayHeight(int displayHeight)
     {
-        this.displayHeight = displayHeight;
+        this._displayHeight = displayHeight;
     }
-    private int displayHeight;
-    private double _deltaTime;
-    private GameState gameState;
 
     public GameState getGameState()
     {
-        return gameState;
+        return _gameState;
     }
 
     public void setGameState(GameState gameState)
     {
-        this.gameState = gameState;
-    }
-
-    public GameData()
-    {
-
+        this._gameState = gameState;
     }
 
     public double getDeltaTime()
@@ -59,9 +69,9 @@ public class GameData
         return _deltaTime;
     }
 
-    public void setDeltaTime(double _deltaTime)
+    public void setDeltaTime(double deltaTime)
     {
-        this._deltaTime = _deltaTime;
+        this._deltaTime = deltaTime;
     }
 
     public int getMapWidth()
@@ -74,4 +84,13 @@ public class GameData
         return _mapHeight;
     }
 
+    public void setMapWidth(int mapWidth)
+    {
+        this._mapWidth = mapWidth;
+    }
+
+    public void setMapHeight(int mapHeight)
+    {
+        this._mapHeight = mapHeight;
+    }
 }

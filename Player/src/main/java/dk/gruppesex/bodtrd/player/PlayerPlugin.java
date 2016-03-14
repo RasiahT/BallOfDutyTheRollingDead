@@ -28,15 +28,17 @@ public class PlayerPlugin implements GamePluginSPI
     public void start(GameData gameData, Map<Integer, Entity> world, List<IEntityProcessor> processors)
     {
         Installer.Plugin = this;
-        _gameData = gameData;
-        _world = world;
-        _processors = processors;
 
+        _world = world;
         _entity = createPlayerEntity();
         world.put(_entity.getID(), _entity);
 
+        _processors = processors;
         _processor = new PlayerProcessor(_entity);
         processors.add(_processor);
+
+        _gameData = gameData;
+        gameData.setPlayerPosition(_entity.get(Position.class));
     }
 
     @Override
@@ -44,6 +46,7 @@ public class PlayerPlugin implements GamePluginSPI
     {
         _processors.remove(_processor);
         _world.remove(_entity.getID());
+        _gameData.setPlayerPosition(null);
     }
 
     private Entity createPlayerEntity()
