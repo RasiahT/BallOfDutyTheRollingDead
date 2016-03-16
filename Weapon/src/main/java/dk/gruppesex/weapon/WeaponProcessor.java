@@ -11,7 +11,7 @@ import dk.gruppesex.bodtrd.common.data.GameData;
 import dk.gruppesex.bodtrd.common.data.entityelements.Position;
 import dk.gruppesex.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppesex.bodtrd.common.data.entityelements.Weapon;
-import dk.gruppesex.bodtrd.common.data.utill.Vector2;
+import dk.gruppesex.bodtrd.common.data.util.Vector2;
 import dk.gruppesex.bodtrd.common.interfaces.IEntityProcessor;
 import java.util.Map;
 

@@ -5,7 +5,7 @@
  */
 package dk.gruppesex.bodtrd.common.data.entityelements;
 
-import dk.gruppesex.bodtrd.common.data.utill.Vector2;
+import dk.gruppesex.bodtrd.common.data.util.Vector2;
 
 /**
  *

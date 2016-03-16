@@ -5,7 +5,7 @@
  */
 package dk.gruppesex.bodtrd.common.data.entityelements;
 
-import dk.gruppesex.bodtrd.common.data.utill.Vector2;
+import dk.gruppesex.bodtrd.common.data.util.Vector2;
 
 /**
  *
@@ -13,7 +13,7 @@ import dk.gruppesex.bodtrd.common.data.utill.Vector2;
  */
 public class Velocity
 {
-    Vector2 _vector;
+    private Vector2 _vector;
 
     public Velocity(double x, double y)
     {

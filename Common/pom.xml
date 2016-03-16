@@ -21,6 +21,8 @@
                         <publicPackage>dk.gruppesex.bodtrd.common.services</publicPackage>
                         <publicPackage>dk.gruppesex.bodtrd.common.interfaces</publicPackage>
                         <publicPackage>dk.gruppesex.bodtrd.common.data.entityelements</publicPackage>
+                        <publicPackage>dk.gruppesex.bodtrd.common.data.utill</publicPackage>
+                        <publicPackage>dk.gruppesex.bodtrd.common.data.util</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

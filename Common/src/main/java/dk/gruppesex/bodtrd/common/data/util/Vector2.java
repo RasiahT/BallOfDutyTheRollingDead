@@ -1,4 +1,4 @@
-package dk.gruppesex.bodtrd.common.data.utill;
+package dk.gruppesex.bodtrd.common.data.util;
 
 /**
  *
