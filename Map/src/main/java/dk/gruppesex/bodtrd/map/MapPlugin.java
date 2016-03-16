@@ -43,7 +43,7 @@ public class MapPlugin implements GamePluginSPI
         gameData.setMapHeight(4096);
         this._world = world;
 
-        MapGenerator.GenerateMap(_walls, gameData);
+        MapGenerator.generateMap(_walls, gameData);
         for (Entity wall : _walls)
         {
             world.put(wall.getID(), wall);
