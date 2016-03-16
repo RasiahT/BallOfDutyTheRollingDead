@@ -5,43 +5,39 @@
  */
 package dk.gruppesex.bodtrd.common.data.entityelements;
 
+import dk.gruppesex.bodtrd.common.data.utill.Vector2;
+
 /**
  *
  * @author Morten
  */
 public class Velocity
 {
-    private double _dx;
-    private double _dy;
+    Vector2 _vector;
 
-    public Velocity(double dx, double dy)
+    public Velocity(double x, double y)
     {
-        this._dx = dx;
-        this._dy = dy;
+        _vector = new Vector2(x, y);
+    }
+
+    public Velocity(Vector2 vec)
+    {
+        _vector = vec;
     }
 
     public Velocity()
     {
+        _vector = new Vector2(0, 0);
     }
 
-    public double getDx()
+    public Vector2 getVector()
     {
-        return _dx;
+        return _vector;
     }
 
-    public void setDx(double dx)
+    public void setVector(Vector2 vector)
     {
-        this._dx = dx;
-    }
-
-    public double getDy()
-    {
-        return _dy;
-    }
-
-    public void setDy(double dy)
-    {
-        this._dy = dy;
+        this._vector = vector;
     }
 
 }

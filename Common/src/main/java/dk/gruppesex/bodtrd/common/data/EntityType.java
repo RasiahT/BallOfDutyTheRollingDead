@@ -12,6 +12,7 @@ package dk.gruppesex.bodtrd.common.data;
 public enum EntityType
 {
     PLAYER,
-    WALL
+    WALL,
+    PROJECTILE
 
 }

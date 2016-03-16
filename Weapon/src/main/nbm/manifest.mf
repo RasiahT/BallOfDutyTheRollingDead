@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Install: dk/gruppesex/weapon/Installer.class
+OpenIDE-Module-Localizing-Bundle: dk/gruppesex/weapon/Bundle.properties
+

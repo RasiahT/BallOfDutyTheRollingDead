@@ -5,6 +5,9 @@
  */
 package dk.gruppesex.bodtrd.common.data;
 
+import dk.gruppesex.bodtrd.common.data.entityelements.Position;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,4 +29,11 @@ public class ActionHandler
         Boolean val = _actions.get(action);
         return val != null && val;
     }
+
+    public static Position getMousePosition()
+    {
+        Point point = MouseInfo.getPointerInfo().getLocation();
+        return new Position(point.getX(), point.getY());
+    }
+
 }

@@ -62,6 +62,7 @@
         <module>Engine</module>
         <module>SilentUpdate</module>
         <module>ModuleBuilder</module>
+        <module>Weapon</module>
     </modules>
 
     <properties>
