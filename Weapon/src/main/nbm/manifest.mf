@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Install: dk/gruppesex/weapon/Installer.class
-OpenIDE-Module-Localizing-Bundle: dk/gruppesex/weapon/Bundle.properties
+OpenIDE-Module-Install: dk/gruppeseks/weapon/Installer.class
+OpenIDE-Module-Localizing-Bundle: dk/gruppeseks/weapon/Bundle.properties
 

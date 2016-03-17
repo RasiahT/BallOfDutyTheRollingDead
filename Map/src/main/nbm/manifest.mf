@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Install: dk/gruppesex/bodtrd/map/Installer.class
-OpenIDE-Module-Localizing-Bundle: dk/gruppesex/bodtrd/map/Bundle.properties
+OpenIDE-Module-Install: dk/gruppeseks/bodtrd/map/Installer.class
+OpenIDE-Module-Localizing-Bundle: dk/gruppeseks/bodtrd/map/Bundle.properties
 

@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Install: dk/gruppesex/movement/Installer.class
-OpenIDE-Module-Localizing-Bundle: dk/gruppesex/movement/Bundle.properties
+OpenIDE-Module-Install: dk/gruppeseks/movement/Installer.class
+OpenIDE-Module-Localizing-Bundle: dk/gruppeseks/movement/Bundle.properties
 

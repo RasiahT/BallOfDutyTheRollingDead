@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>dk.gruppesex</groupId>
+        <groupId>dk.gruppeseks</groupId>
         <artifactId>BoDtRD-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>dk.gruppesex.bodtrd</groupId>
+    <groupId>dk.gruppeseks.bodtrd</groupId>
     <artifactId>Common</artifactId>
     <packaging>nbm</packaging>
     <build>
@@ -17,12 +17,12 @@
                 <extensions>true</extensions>
                 <configuration>
                     <publicPackages>
-                        <publicPackage>dk.gruppesex.bodtrd.common.data</publicPackage>
-                        <publicPackage>dk.gruppesex.bodtrd.common.services</publicPackage>
-                        <publicPackage>dk.gruppesex.bodtrd.common.interfaces</publicPackage>
-                        <publicPackage>dk.gruppesex.bodtrd.common.data.entityelements</publicPackage>
-                        <publicPackage>dk.gruppesex.bodtrd.common.data.utill</publicPackage>
-                        <publicPackage>dk.gruppesex.bodtrd.common.data.util</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.data</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.services</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.interfaces</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.data.entityelements</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.data.utill</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.data.util</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>
