@@ -19,9 +19,9 @@ public class ActionHandler
 {
     private static Map<Action, Boolean> _actions = new ConcurrentHashMap();
 
-    public static void setActive(Action action, boolean active)
+    public static void setActive(Action action, boolean b)
     {
-        _actions.put(action, active);
+        _actions.put(action, b);
     }
 
     public static boolean isActive(Action action)
@@ -35,5 +35,4 @@ public class ActionHandler
         Point point = MouseInfo.getPointerInfo().getLocation();
         return new Position(point.getX(), point.getY());
     }
-
 }

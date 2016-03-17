@@ -63,6 +63,7 @@
         <module>SilentUpdate</module>
         <module>ModuleBuilder</module>
         <module>Weapon</module>
+        <module>Movement</module>
     </modules>
 
     <properties>

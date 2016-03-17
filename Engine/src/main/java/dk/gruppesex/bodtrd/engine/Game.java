@@ -19,6 +19,7 @@ import dk.gruppesex.bodtrd.common.data.entityelements.Position;
 import dk.gruppesex.bodtrd.common.data.entityelements.View;
 import dk.gruppesex.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppesex.bodtrd.common.services.GamePluginSPI;
+import dk.gruppesex.bodtrd.managers.GameInputManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ public class Game implements ApplicationListener
         _gameData.setDisplayWidth(Gdx.graphics.getWidth());
         _gameData.setDisplayHeight(Gdx.graphics.getHeight());
         _camera = new OrthographicCamera(_gameData.getDisplayWidth(), _gameData.getDisplayHeight());
+
+        Gdx.input.setInputProcessor(new GameInputManager());
 
         Lookup.Result<GamePluginSPI> result = _lookup.lookupResult(GamePluginSPI.class);
         result.addLookupListener(lookupListener);
