@@ -5,43 +5,21 @@
  */
 package dk.gruppeseks.bodtrd.common.data.entityelements;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  *
  * @author frede
  */
 public class View
 {
-    private String _imageFile = "";
+    private final String _imageFile;
 
     public View(String path)
     {
-        try
-        {
-            _imageFile = new File(path).getCanonicalPath().replace("\\", "/");
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-        }
+        _imageFile = path;
     }
 
     public String getImageFilePath()
     {
         return _imageFile;
-    }
-
-    public void setImageFile(String path)
-    {
-        try
-        {
-            _imageFile = new File(path).getCanonicalPath().replace("\\", "/");
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-        }
     }
 }

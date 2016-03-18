@@ -3,11 +3,11 @@ package dk.gruppeseks.bodtrd.player;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.GameData;
+import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
-import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import org.openide.util.lookup.ServiceProvider;
@@ -30,6 +30,8 @@ public class PlayerPlugin implements GamePluginSPI
     {
         Installer.Plugin = this;
 
+        ViewManager.createView(PLAYER_IMAGE_FILE_PATH);
+
         _world = world;
 
         _entity = createPlayerEntity();
@@ -44,6 +46,8 @@ public class PlayerPlugin implements GamePluginSPI
     @Override
     public void stop()
     {
+        ViewManager.removeView(PLAYER_IMAGE_FILE_PATH);
+
         _world.removeProcessor(_processor);
         _world.removeEntity(_entity);
         _gameData.setPlayerPosition(null);
@@ -57,7 +61,7 @@ public class PlayerPlugin implements GamePluginSPI
         entity.add(new Position(200, 100));
         entity.add(new Body(50, 50));
         entity.add(new Velocity());
-        entity.add(new View(PLAYER_IMAGE_FILE_PATH));
+        entity.add(ViewManager.getView(PLAYER_IMAGE_FILE_PATH));
 
         return entity;
     }

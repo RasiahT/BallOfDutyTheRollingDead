@@ -5,13 +5,14 @@
  */
 package dk.gruppeseks.weapon;
 
+import dk.gruppeseks.bodtrd.common.data.ActionHandler;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import static dk.gruppeseks.bodtrd.common.data.EntityType.PROJECTILE;
+import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
-import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
@@ -22,9 +23,6 @@ import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
  */
 public class WeaponProcessor implements IEntityProcessor
 {
-    private static final String BULLET_IMAGE_FILE_PATH = "../../../Player/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/blackball.png";
-    private static View _view = new View(BULLET_IMAGE_FILE_PATH);
-
     @Override
     public void process(World world)
     {
@@ -54,13 +52,13 @@ public class WeaponProcessor implements IEntityProcessor
                 {
                     continue;
                 }
-                wep.setReloadTimeLeft(wep.getReloadSpeed());
+                wep.setReloading(true);
                 continue;
             }
 
             wep.setAttackCooldown((float)(wep.getAttackCooldown() - world.getGameData().getDeltaTime()));
 
-            if (!(wep.getAttackCooldown() > 0))
+            if (wep.getAttackCooldown() > 0)
             {
                 continue;
             }
@@ -72,19 +70,22 @@ public class WeaponProcessor implements IEntityProcessor
     private void attack(World world, Entity e, Weapon wep)
     {
         Position p = e.get(Position.class);
-        Vector2 orientation = wep.getOrientation();//.setMagnitude(e.get(Body.class).getWidth()/2);TODO
+        Position mousePos = ActionHandler.getMousePosition();
+        wep.setOrientation(new Vector2(mousePos.getX(), mousePos.getY()));
+        Vector2 orientation = wep.getOrientation().setMagnitude(e.get(Body.class).getWidth() / 2);
         Position position = new Position(p.getX() + orientation.getX(), p.getY() + orientation.getY());
-        Velocity velocity = new Velocity(wep.getOrientation());//.setMagnitude(bulletSpeed);TODO: bulletSpeed
+        Velocity velocity = new Velocity(wep.getOrientation().setMagnitude(500));//;TODO: bulletSpeed
 
         Entity bullet = new Entity();
         bullet.setType(PROJECTILE);
         bullet.add(position);
         bullet.add(velocity);
         bullet.add(new Body(20, 20));
-        bullet.add(_view);
+        bullet.add(ViewManager.getView(WeaponPlugin.BULLET_IMAGE_FILE_PATH));
         world.addEntity(bullet);
 
         wep.setCurrentMagazineSize(wep.getCurrentMagazineSize() - 1);
+        wep.setAttackCooldown(wep.getAttackSpeed());
     }
 
     private void handleReloading(Weapon wep)
@@ -92,7 +93,7 @@ public class WeaponProcessor implements IEntityProcessor
         if (wep.isReloading())
         {
             int currentAmmunition = wep.getCurrentAmmunition();
-            int removedAmmunition = Math.max(currentAmmunition, currentAmmunition - wep.getMaxMagazineSize());
+            int removedAmmunition = Math.min(currentAmmunition, wep.getMaxMagazineSize());
             wep.setCurrentAmmunition(currentAmmunition - removedAmmunition);
             wep.setCurrentMagazineSize(removedAmmunition);
             wep.setReloading(false);
@@ -103,12 +104,12 @@ public class WeaponProcessor implements IEntityProcessor
     public void notifyEntitiesAdded(Entity entity)
     {
         Weapon wep = new Weapon();
-        wep.setAttackSpeed(400);
+        wep.setAttackSpeed(0.4f);
         wep.setMaxAmmunition(300);
         wep.setCurrentAmmunition(wep.getMaxAmmunition());
         wep.setMaxMagazineSize(30);
         wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
-        wep.setReloadSpeed(1000);
+        wep.setReloadSpeed(2);
 
         entity.add(wep);
     }

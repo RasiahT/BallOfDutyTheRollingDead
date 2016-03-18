@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.GameData;
+import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
@@ -104,15 +105,8 @@ public class Game implements ApplicationListener
 
     private void loadViews()
     {
-        for (Entity e : _world.entities())
+        for (View view : ViewManager.views())
         {
-            View view = e.get(View.class);
-
-            if (view == null)
-            {
-                continue;
-            }
-
             String imagePath = view.getImageFilePath();
 
             if (!_assetManager.isLoaded(imagePath, Texture.class))

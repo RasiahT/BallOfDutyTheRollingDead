@@ -5,6 +5,7 @@ import dk.gruppeseks.bodtrd.common.data.ActionHandler;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 
@@ -47,6 +48,19 @@ public class PlayerProcessor implements IEntityProcessor
             vel.addVector(-1, 0);
         }
         vel.setMagnitude(_movementSpeed);
+
+        Weapon wep = _player.get(Weapon.class);
+        if (wep == null)
+        {
+            return;
+        }
+
+        wep.setAttacking(ActionHandler.isActive(Action.SHOOT));
+
+        if (ActionHandler.isActive(Action.RELOAD))
+        {
+            wep.setReloading(true);
+        }
     }
 
     @Override

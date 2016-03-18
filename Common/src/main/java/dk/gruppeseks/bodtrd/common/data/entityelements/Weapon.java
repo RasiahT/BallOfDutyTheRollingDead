@@ -42,6 +42,10 @@ public class Weapon
     public void setReloading(boolean isReloading)
     {
         this._isReloading = isReloading;
+        if (_isReloading)
+        {
+            setReloadTimeLeft(getReloadSpeed());
+        }
     }
 
     public float getAttackSpeed()
@@ -62,7 +66,6 @@ public class Weapon
     public void setReloadTimeLeft(float reloadTimeLeft)
     {
         this._reloadTimeLeft = reloadTimeLeft;
-        this._isReloading = true;
     }
 
     public float getReloadSpeed()
