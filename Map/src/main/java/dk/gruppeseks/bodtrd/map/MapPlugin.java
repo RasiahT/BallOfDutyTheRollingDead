@@ -6,12 +6,10 @@
 package dk.gruppeseks.bodtrd.map;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
-import dk.gruppeseks.bodtrd.common.data.GameData;
-import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
+import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -21,8 +19,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class MapPlugin implements GamePluginSPI
 {
-    private Map<Integer, Entity> _world;
-    private GameData _gameData;
+    private World _world;
     private List<Entity> _walls = new ArrayList<>();
 
     @Override
@@ -30,23 +27,23 @@ public class MapPlugin implements GamePluginSPI
     {
         for (Entity wall : _walls)
         {
-            _world.remove(wall.getID(), wall);
+            _world.removeEntity(wall);
         }
     }
 
     @Override
-    public void start(GameData gameData, Map<Integer, Entity> world, List<IEntityProcessor> processors)
+    public void start(World world)
     {
         Installer.Plugin = this;
-        _gameData = gameData;
-        gameData.setMapWidth(4096);
-        gameData.setMapHeight(4096);
-        this._world = world;
 
-        MapGenerator.generateMap(_walls, gameData);
+        this._world = world;
+        _world.getGameData().setMapWidth(4096);
+        _world.getGameData().setMapHeight(4096);
+
+        MapGenerator.generateMap(_walls, _world.getGameData());
         for (Entity wall : _walls)
         {
-            world.put(wall.getID(), wall);
+            world.addEntity(wall);
         }
     }
 }

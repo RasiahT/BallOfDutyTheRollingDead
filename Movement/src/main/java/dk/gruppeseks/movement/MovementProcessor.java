@@ -6,12 +6,11 @@
 package dk.gruppeseks.movement;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
-import dk.gruppeseks.bodtrd.common.data.GameData;
+import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
-import java.util.Map;
 
 /**
  *
@@ -20,11 +19,11 @@ import java.util.Map;
 public class MovementProcessor implements IEntityProcessor
 {
     @Override
-    public void process(GameData gameData, Map<Integer, Entity> world)
+    public void process(World world)
     {
-        double dt = gameData.getDeltaTime();
+        double dt = world.getGameData().getDeltaTime();
 
-        for (Entity e : world.values())
+        for (Entity e : world.entities())
         {
             Position p = e.get(Position.class);
             Velocity velocity = e.get(Velocity.class);
@@ -39,5 +38,17 @@ public class MovementProcessor implements IEntityProcessor
             p.setX(p.getX() + (v.getX() * 250 * dt)); // TODO replace hardcoded 250 with  v.getMagnitude()
             p.setY(p.getY() + (v.getY() * 250 * dt)); // TODO replace hardcoded 250 with  v.getMagnitude()
         }
+    }
+
+    @Override
+    public void notifyEntitiesAdded(Entity entity)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void notifyEntitiesRemoved(Entity entity)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

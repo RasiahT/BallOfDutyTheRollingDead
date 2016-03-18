@@ -5,12 +5,9 @@
  */
 package dk.gruppeseks.weapon;
 
-import dk.gruppeseks.bodtrd.common.data.Entity;
-import dk.gruppeseks.bodtrd.common.data.GameData;
+import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
-import java.util.List;
-import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -21,28 +18,23 @@ import org.openide.util.lookup.ServiceProvider;
 public class WeaponPlugin implements GamePluginSPI
 {
     private IEntityProcessor _processor;
-    private GameData _gameData;
-    private Map<Integer, Entity> _world;
-    private List<IEntityProcessor> _processors;
+    private World _world;
 
     @Override
-    public void start(GameData gameData, Map<Integer, Entity> world, List<IEntityProcessor> processors)
+    public void start(World world)
     {
         Installer.Plugin = this;
 
         _world = world;
 
-        _processors = processors;
         _processor = new WeaponProcessor();
-        processors.add(_processor);
-
-        _gameData = gameData;
+        _world.addProcessor(3, _processor);
     }
 
     @Override
     public void stop()
     {
-        _processors.remove(_processor);
+        _world.removeProcessor(_processor);
     }
 
 }

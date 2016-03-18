@@ -5,12 +5,9 @@
  */
 package dk.gruppeseks.movement;
 
-import dk.gruppeseks.bodtrd.common.data.Entity;
-import dk.gruppeseks.bodtrd.common.data.GameData;
+import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
-import java.util.List;
-import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -20,22 +17,22 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class MovementPlugin implements GamePluginSPI
 {
-    private List<IEntityProcessor> _processors;
+    private World _world;
     private IEntityProcessor _processor;
 
     @Override
-    public void start(GameData gameData, Map<Integer, Entity> world, List<IEntityProcessor> processors)
+    public void start(World world)
     {
         Installer.Plugin = this;
 
-        _processors = processors;
+        _world = world;
         _processor = new MovementProcessor();
-        _processors.add(_processor);
+        _world.addProcessor(2, _processor);
     }
 
     @Override
     public void stop()
     {
-        _processors.remove(_processor);
+        _world.removeProcessor(_processor);
     }
 }

@@ -1,10 +1,6 @@
 package dk.gruppeseks.bodtrd.common.services;
 
-import dk.gruppeseks.bodtrd.common.data.Entity;
-import dk.gruppeseks.bodtrd.common.data.GameData;
-import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
-import java.util.List;
-import java.util.Map;
+import dk.gruppeseks.bodtrd.common.data.World;
 
 /**
  * @description Defines the required methods for any pluggable game component.
@@ -16,14 +12,11 @@ import java.util.Map;
 public interface GamePluginSPI
 {
     /**
-     * @param gameData Data about the game not related to entities.
-     * @param world All entities in the game.
-     * @param processors List of entity processors. Allows the plugin to inject its own processors.
      * @description Should be the first method to be invoked when the component is loaded. It is responsible for initializing the component.
      * @pre The implementation of the interface is loaded.
      * @post The component has been initialized according to its implementation of start().
      */
-    public void start(GameData gameData, Map<Integer, Entity> world, List<IEntityProcessor> processors);
+    public void start(World world);
 
     /**
      * @description Responsible for unloading the component. This method should be invoked as the last in the components lifetime.

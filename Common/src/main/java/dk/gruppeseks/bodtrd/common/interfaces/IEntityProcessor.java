@@ -6,8 +6,7 @@
 package dk.gruppeseks.bodtrd.common.interfaces;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
-import dk.gruppeseks.bodtrd.common.data.GameData;
-import java.util.Map;
+import dk.gruppeseks.bodtrd.common.data.World;
 
 /**
  * @description Defines the methods required for any implementation seeking to process a given set of entities. The process method is
@@ -17,10 +16,12 @@ public interface IEntityProcessor
 {
 
     /**
-     * @param gameData Data about the game not related to entities.
-     * @param world All entities in the game.
      * @description Processes a set of entities.
      * @post x amount of entities have been processed.
      */
-    public void process(GameData gameData, Map<Integer, Entity> world);
+    public void process(World world);
+
+    public void notifyEntitiesAdded(Entity entity);
+
+    public void notifyEntitiesRemoved(Entity entity);
 }
