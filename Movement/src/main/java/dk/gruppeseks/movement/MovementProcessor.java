@@ -36,8 +36,8 @@ public class MovementProcessor implements IEntityProcessor
 
             Vector2 v = velocity.getVector();
 
-            p.setX(p.getX() + (v.getX() * 250 * dt)); // TODO replace hardcoded 250 with  v.getMagnitude()
-            p.setY(p.getY() + (v.getY() * 250 * dt)); // TODO replace hardcoded 250 with  v.getMagnitude()
+            p.setX(p.getX() + (v.getX() * dt));
+            p.setY(p.getY() + (v.getY() * dt));
         }
     }
 }
