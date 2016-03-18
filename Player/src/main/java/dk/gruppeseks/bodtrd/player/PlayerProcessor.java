@@ -15,6 +15,7 @@ import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 public class PlayerProcessor implements IEntityProcessor
 {
     private Entity _player;
+    private int _movementSpeed = 250;
 
     public PlayerProcessor(Entity player)
     {
@@ -31,24 +32,21 @@ public class PlayerProcessor implements IEntityProcessor
 
         if (ActionHandler.isActive(Action.MOVE_DOWN))
         {
-            vel.setX(0);
-            vel.setY(-1);
+            vel.addVector(0, -1);
         }
         if (ActionHandler.isActive(Action.MOVE_UP))
         {
-            vel.setX(0);
-            vel.setY(1);
+            vel.addVector(0, 1);
         }
         if (ActionHandler.isActive(Action.MOVE_RIGHT))
         {
-            vel.setX(1);
-            vel.setY(0);
+            vel.addVector(1, 0);
         }
         if (ActionHandler.isActive(Action.MOVE_LEFT))
         {
-            vel.setX(-1);
-            vel.setY(0);
+            vel.addVector(-1, 0);
         }
+        vel.setMagnitude(_movementSpeed);
     }
 
     @Override

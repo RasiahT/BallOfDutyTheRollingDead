@@ -160,6 +160,21 @@ public class Vector2
     }
 
     /**
+     * Adds another vector described by the given doubles
+     * x and y to this vector.
+     *
+     * @param x
+     * @param y
+     * @return This vector.
+     */
+    public Vector2 addVector(double x, double y)
+    {
+        this.x += x;
+        this.y += y;
+        return this;
+    }
+
+    /**
      * Substracts one vector with another and returns the result.
      *
      * @param vector1 The vector to be substracted from.
