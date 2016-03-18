@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import dk.gruppeseks.bodtrd.common.data.ActionHandler;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
@@ -118,6 +119,7 @@ public class Game implements ApplicationListener
 
     private void update()
     {
+        ActionHandler.setMousePosition(Gdx.input.getX(), Gdx.input.getY());
         _world.update();
         _assetManager.update();
     }
