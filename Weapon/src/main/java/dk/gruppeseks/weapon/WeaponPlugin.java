@@ -5,7 +5,10 @@
  */
 package dk.gruppeseks.weapon;
 
+import dk.gruppeseks.bodtrd.common.data.Entity;
+import static dk.gruppeseks.bodtrd.common.data.EntityType.PLAYER;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import org.openide.util.lookup.ServiceProvider;
@@ -29,12 +32,38 @@ public class WeaponPlugin implements GamePluginSPI
 
         _processor = new WeaponProcessor();
         _world.addProcessor(3, _processor);
+        _world.addEnthusiast(PLAYER, _processor);
+
+        for (Entity e : _world.entities())
+        {
+            if (e.getType() == PLAYER)
+            {
+                Weapon wep = new Weapon();
+                wep.setAttackSpeed(400);
+                wep.setMaxAmmunition(300);
+                wep.setCurrentAmmunition(wep.getMaxAmmunition());
+                wep.setMaxMagazineSize(30);
+                wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
+                wep.setReloadSpeed(1000);
+
+                e.add(wep);
+            }
+        }
     }
 
     @Override
     public void stop()
     {
         _world.removeProcessor(_processor);
+        _world.removeEnthusiast(PLAYER, _processor);
+
+        for (Entity e : _world.entities())
+        {
+            if (e.getType() == PLAYER)
+            {
+                e.remove(Weapon.class);
+            }
+        }
     }
 
 }
