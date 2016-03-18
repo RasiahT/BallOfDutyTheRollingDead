@@ -8,8 +8,10 @@ package dk.gruppeseks.weapon;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import static dk.gruppeseks.bodtrd.common.data.EntityType.PROJECTILE;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
+import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
@@ -20,6 +22,9 @@ import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
  */
 public class WeaponProcessor implements IEntityProcessor
 {
+    private static final String BULLET_IMAGE_FILE_PATH = "../../../Player/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/blackball.png";
+    private static View _view = new View(BULLET_IMAGE_FILE_PATH);
+
     @Override
     public void process(World world)
     {
@@ -70,10 +75,15 @@ public class WeaponProcessor implements IEntityProcessor
         Vector2 orientation = wep.getOrientation();//.setMagnitude(e.get(Body.class).getWidth()/2);TODO
         Position position = new Position(p.getX() + orientation.getX(), p.getY() + orientation.getY());
         Velocity velocity = new Velocity(wep.getOrientation());//.setMagnitude(bulletSpeed);TODO: bulletSpeed
+
         Entity bullet = new Entity();
         bullet.setType(PROJECTILE);
         bullet.add(position);
         bullet.add(velocity);
+        bullet.add(new Body(20, 20));
+        bullet.add(_view);
+        world.addEntity(bullet);
+
         wep.setCurrentMagazineSize(wep.getCurrentMagazineSize() - 1);
     }
 
@@ -92,13 +102,20 @@ public class WeaponProcessor implements IEntityProcessor
     @Override
     public void notifyEntitiesAdded(Entity entity)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Weapon wep = new Weapon();
+        wep.setAttackSpeed(400);
+        wep.setMaxAmmunition(300);
+        wep.setCurrentAmmunition(wep.getMaxAmmunition());
+        wep.setMaxMagazineSize(30);
+        wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
+        wep.setReloadSpeed(1000);
+
+        entity.add(wep);
     }
 
     @Override
     public void notifyEntitiesRemoved(Entity entity)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
