@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dk.gruppeseks.movement;
+package dk.gruppeseks.bodtrd.movement;
 
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import org.openide.modules.ModuleInstall;

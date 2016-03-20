@@ -27,7 +27,7 @@ public class Activator extends ModuleInstall
             {
                 if (UpdateHandler.timeToCheck())
                 {
-                    UpdateHandler.checkAndHandleUpdates();
+                    UpdateHandler.checkAndHandleModules();
                 }
             };
 

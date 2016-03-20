@@ -41,6 +41,10 @@ public class PlayerPlugin implements GamePluginSPI
         _world.addProcessor(1, _processor);
 
         _world.getGameData().setPlayerPosition(_entity.get(Position.class));
+        Body body = _entity.get(Body.class);
+        Position pos = _entity.get(Position.class);
+        _world.getGameData().setPlayerPosition(pos);
+        _world.getGameData().setPlayerBody(body);
     }
 
     @Override
@@ -50,7 +54,6 @@ public class PlayerPlugin implements GamePluginSPI
 
         _world.removeProcessor(_processor);
         _world.removeEntity(_entity);
-        _gameData.setPlayerPosition(null);
     }
 
     private Entity createPlayerEntity()

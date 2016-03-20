@@ -2,30 +2,29 @@ package org.netbeans.modules.autoupdate.silentupdate;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.netbeans.api.autoupdate.InstallSupport;
 import org.netbeans.api.autoupdate.InstallSupport.Installer;
 import org.netbeans.api.autoupdate.InstallSupport.Validator;
 import org.netbeans.api.autoupdate.OperationContainer;
 import org.netbeans.api.autoupdate.OperationContainer.OperationInfo;
 import org.netbeans.api.autoupdate.OperationException;
+import org.netbeans.api.autoupdate.OperationSupport;
 import org.netbeans.api.autoupdate.OperationSupport.Restarter;
 import org.netbeans.api.autoupdate.UpdateElement;
 import org.netbeans.api.autoupdate.UpdateManager;
 import org.netbeans.api.autoupdate.UpdateUnit;
 import org.netbeans.api.autoupdate.UpdateUnitProvider;
 import org.netbeans.api.autoupdate.UpdateUnitProviderFactory;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 
-/**
- * @author https://github.com/corfixen
- */
 public final class UpdateHandler
 {
-
     public static final String SILENT_UC_CODE_NAME = "org_netbeans_modules_autoupdate_silentupdate_update_center"; // NOI18N
+    private static Set<String> _installedModuleCodeNames = new HashSet<>();
 
     public static boolean timeToCheck()
     {
@@ -47,81 +46,106 @@ public final class UpdateHandler
         }
     }
 
-    public static void checkAndHandleUpdates()
+    public static void checkAndHandleModules()
     {
         // refresh silent update center first
-        refreshSilentUpdateProvider();
-
-        Collection<UpdateElement> updates = findUpdates();
-        Collection<UpdateElement> available = Collections.emptySet();
-        if (installNewModules())
-        {
-            available = findNewModules();
-        }
-        if (updates.isEmpty() && available.isEmpty())
-        {
-            // none for install
-            OutputLogger.log("None for install");
-            return;
-        }
-
-        // create a container for install
-        OperationContainer<InstallSupport> containerForInstall = feedContainer(available, false);
-        if (containerForInstall != null)
-        {
-            try
-            {
-                handleInstall(containerForInstall);
-                OutputLogger.log("Install new modules done.");
-            }
-            catch (UpdateHandlerException ex)
-            {
-                OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
-                return;
-            }
-        }
-
-        // create a container for update
-        OperationContainer<InstallSupport> containerForUpdate = feedContainer(updates, true);
-        if (containerForUpdate != null)
-        {
-            try
-            {
-                handleInstall(containerForUpdate);
-                OutputLogger.log("Update done.");
-            }
-            catch (UpdateHandlerException ex)
-            {
-                OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
-                return;
-            }
-        }
-
-    }
-
-    public static boolean isLicenseApproved(String license)
-    {
-        // place your code there
-        return true;
-    }
-
-    // package private methods
-    static Collection<UpdateElement> findUpdates()
-    {
-        // check updates
-        Collection<UpdateElement> elements4update = new HashSet<UpdateElement>();
+        UpdateUnitProvider silentUpdateProvider = getSilentUpdateProvider();
         List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
+
+        findAndInstallModules(updateUnits);
+        uninstallRemovedModules(silentUpdateProvider, updateUnits);
+    }
+
+    static void findAndInstallModules(List<UpdateUnit> updateUnits)
+    {
+        Collection<UpdateElement> moduleUpdates = new HashSet<>();
+        Collection<UpdateElement> newModules = new HashSet<>();
+
         for (UpdateUnit unit : updateUnits)
         {
-            if (unit.getInstalled() != null)
-            { // means the plugin already installed
-                if (!unit.getAvailableUpdates().isEmpty())
-                { // has updates
-                    elements4update.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
+            if (!unit.getAvailableUpdates().isEmpty()) // module has available content
+            {
+                // null means the module is not installed.
+                if (unit.getInstalled() == null)
+                {
+                    newModules.add(unit.getAvailableUpdates().get(0)); // add content with highest version
+                }
+                else
+                {
+                    moduleUpdates.add(unit.getAvailableUpdates().get(0)); // add content with highest version
                 }
             }
         }
-        return elements4update;
+
+        if (newModuleInstallationAllowed())
+        {
+            installModules(newModules, false);
+        }
+        installModules(moduleUpdates, true);
+    }
+
+    static void installModules(Collection<UpdateElement> elements, boolean forUpdate)
+    {
+        if (elements.isEmpty())
+        {
+            if (forUpdate)
+            {
+                OutputLogger.log("No updates found.");
+            }
+            else
+            {
+                OutputLogger.log("No new modules found.");
+            }
+            return;
+        }
+
+        OperationContainer<InstallSupport> container;
+        if (forUpdate)
+        {
+            container = OperationContainer.createForUpdate();
+        }
+        else
+        {
+            container = OperationContainer.createForInstall();
+        }
+
+        // loop all updates and add to container for update
+        for (UpdateElement ue : elements)
+        {
+            if (container.canBeAdded(ue.getUpdateUnit(), ue))
+            {
+                OutputLogger.log("Module found: " + ue);
+                OperationInfo<InstallSupport> operationInfo = container.add(ue);
+                if (operationInfo == null)
+                {
+                    continue;
+                }
+                container.add(operationInfo.getRequiredElements());
+                if (!operationInfo.getBrokenDependencies().isEmpty())
+                {
+                    // have a problem => cannot continue
+                    OutputLogger.log("There are broken dependencies => cannot continue, broken deps: " + operationInfo.getBrokenDependencies());
+                    return;
+                }
+            }
+        }
+
+        try
+        {
+            handleInstall(container);
+            if (forUpdate)
+            {
+                OutputLogger.log("Update modules done.");
+            }
+            else
+            {
+                OutputLogger.log("Install new modules done.");
+            }
+        }
+        catch (UpdateHandlerException ex)
+        {
+            OutputLogger.log(ex.getLocalizedMessage(), ex.getCause());
+        }
     }
 
     static void handleInstall(OperationContainer<InstallSupport> container) throws UpdateHandlerException
@@ -135,6 +159,7 @@ public final class UpdateHandler
 
         // download
         InstallSupport support = container.getSupport();
+
         Validator v = null;
         try
         {
@@ -182,44 +207,34 @@ public final class UpdateHandler
 
         // restart later
         support.doRestartLater(r);
-        return;
     }
 
-    static Collection<UpdateElement> findNewModules()
+    static void uninstallRemovedModules(UpdateUnitProvider silentUpdateProvider, List<UpdateUnit> updateUnits)
     {
-        // check updates
-        Collection<UpdateElement> elements4install = new HashSet<UpdateElement>();
-        List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
-        for (UpdateUnit unit : updateUnits)
+        // Get modules defined in the remote updates.xml
+        List<UpdateUnit> remoteModules = silentUpdateProvider.getUpdateUnits();
+        Set<String> unitsToUninstall = new HashSet<>();
+
+        // Iterate through all installed or remotely available modules.
+        for (UpdateUnit module : updateUnits)
         {
-            if (unit.getInstalled() == null)
-            { // means the plugin is not installed yet
-                if (!unit.getAvailableUpdates().isEmpty())
-                { // is available
-                    elements4install.add(unit.getAvailableUpdates().get(0)); // add plugin with highest version
-                }
+            // Updated module list no longer contains "module" and this module has previously been installed.
+            // TODO determine whether we need to be able to uninstall modules that were not installed in the same runtime.
+            // ATM modules removed from updates.xml while this app is not running will not be detected as changes.
+            if (!remoteModules.contains(module) && _installedModuleCodeNames.contains(module.getCodeName()))
+            {
+                unitsToUninstall.add(module.getCodeName());
             }
         }
-        return elements4install;
-    }
+        if (!unitsToUninstall.isEmpty())
+        {
+            doUninstall(unitsToUninstall, updateUnits);
+        }
 
-    static void refreshSilentUpdateProvider()
-    {
-        UpdateUnitProvider silentUpdateProvider = getSilentUpdateProvider();
-        if (silentUpdateProvider == null)
+        _installedModuleCodeNames.clear();
+        for (UpdateUnit module : remoteModules)
         {
-            // have a problem => cannot continue
-            OutputLogger.log("Missing Silent Update Provider => cannot continue.");
-            return;
-        }
-        try
-        {
-            silentUpdateProvider.refresh(null, true);
-        }
-        catch (IOException ex)
-        {
-            // caught a exception
-            OutputLogger.log("A problem caught while refreshing Update Centers, cause: ", ex);
+            _installedModuleCodeNames.add(module.getCodeName());
         }
     }
 
@@ -242,47 +257,9 @@ public final class UpdateHandler
                 return p;
             }
         }
+        // have a problem => cannot continue
+        OutputLogger.log("Missing Silent Update Provider => cannot continue.");
         return null;
-    }
-
-    static OperationContainer<InstallSupport> feedContainer(Collection<UpdateElement> updates, boolean update)
-    {
-        if (updates == null || updates.isEmpty())
-        {
-            return null;
-        }
-        // create a container for update
-        OperationContainer<InstallSupport> container;
-        if (update)
-        {
-            container = OperationContainer.createForUpdate();
-        }
-        else
-        {
-            container = OperationContainer.createForInstall();
-        }
-
-        // loop all updates and add to container for update
-        for (UpdateElement ue : updates)
-        {
-            if (container.canBeAdded(ue.getUpdateUnit(), ue))
-            {
-                OutputLogger.log("Update found: " + ue);
-                OperationInfo<InstallSupport> operationInfo = container.add(ue);
-                if (operationInfo == null)
-                {
-                    continue;
-                }
-                container.add(operationInfo.getRequiredElements());
-                if (!operationInfo.getBrokenDependencies().isEmpty())
-                {
-                    // have a problem => cannot continue
-                    OutputLogger.log("There are broken dependencies => cannot continue, broken deps: " + operationInfo.getBrokenDependencies());
-                    return null;
-                }
-            }
-        }
-        return container;
     }
 
     static boolean allLicensesApproved(OperationContainer<InstallSupport> container)
@@ -304,13 +281,14 @@ public final class UpdateHandler
 
     static Validator doDownload(InstallSupport support) throws OperationException
     {
-        return support.doDownload(null, true);
+        return support.doDownload(null, true, false);
     }
 
     static Installer doVerify(InstallSupport support, Validator validator) throws OperationException
     {
 
         Installer installer = support.doValidate(validator, null); // validates all plugins are correctly downloaded
+
         // XXX: use there methods to make sure updates are signed and trusted
         // installSupport.isSigned(installer, <an update element>);
         // installSupport.isTrusted(installer, <an update element>);
@@ -322,7 +300,96 @@ public final class UpdateHandler
         return support.doInstall(installer, null);
     }
 
-    private static boolean installNewModules()
+    public static boolean isLicenseApproved(String license)
+    {
+        // place your code there
+        return true;
+    }
+
+    // codeName contains code name of modules for disable
+    static void doDisable(Collection<String> codeNames)
+    {
+        Collection<UpdateElement> toDisable = new HashSet<>();
+        // Get local/installed modules AND modules defined in remote updates.xml
+        List<UpdateUnit> allUpdateUnits = UpdateManager.getDefault().getUpdateUnits();
+        for (UpdateUnit unit : allUpdateUnits)
+        {
+            UpdateElement el = unit.getInstalled();
+            // filter all installed modules and enabled modules
+            if (el == null || !el.isEnabled())
+            {
+                continue;
+            }
+            // check if the module should be disabled.
+            if (codeNames.contains(el.getCodeName()))
+            {
+                toDisable.add(el);
+            }
+        }
+
+        OperationContainer<OperationSupport> oc = OperationContainer.createForDirectDisable();
+        disableOrUninstall(oc, toDisable);
+    }
+
+    // codeName contains code name of modules for disable
+    static void doUninstall(Collection<String> codeNames, List<UpdateUnit> updateUnits)
+    {
+        Collection<UpdateElement> toUninstall = new HashSet<>();
+        // Iterate through all installed or remotely available modules.
+        for (UpdateUnit unit : updateUnits)
+        {
+            UpdateElement el = unit.getInstalled();
+            // filter all installed modules
+            if (el == null)
+            {
+                continue;
+            }
+            // check if the module should be uninstalled.
+            if (codeNames.contains(el.getCodeName()))
+            { // filter given module in the parameter
+                toUninstall.add(el);
+            }
+        }
+
+        OperationContainer<OperationSupport> oc = OperationContainer.createForDirectUninstall();
+        disableOrUninstall(oc, toUninstall);
+    }
+
+    static void disableOrUninstall(OperationContainer<OperationSupport> oc, Collection<UpdateElement> elements)
+    {
+        for (UpdateElement module : elements)
+        {
+            // check if module can be disabled/uninstalled.
+            if (oc.canBeAdded(module.getUpdateUnit(), module))
+            {
+                OperationInfo operationInfo = oc.add(module);
+                if (operationInfo == null) // the module is already planned to be disabled/uninstalled.
+                {
+                    continue;
+                }
+                // get all modules depending on this module --- TODO isnt this actually modules depending on this module?
+                Set requiredElements = operationInfo.getRequiredElements();
+                // add all of them to modules for disable/uninstall
+                oc.add(requiredElements);
+            }
+        }
+
+        // check the container doesn't contain any invalid element
+        assert oc.listInvalid().isEmpty();
+        try
+        {
+            // get operation support for completing the disable/uninstall operation
+            Restarter restarter = oc.getSupport().doOperation(null);
+            // no restart needed in this case
+            assert restarter == null;
+        }
+        catch (OperationException ex)
+        {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private static boolean newModuleInstallationAllowed()
     {
         String s = NbBundle.getBundle("org.netbeans.modules.autoupdate.silentupdate.resources.Bundle").getString("UpdateHandler.NewModules");
         return Boolean.parseBoolean(s);

@@ -6,6 +6,7 @@
         <artifactId>BoDtRD-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <groupId>dk.gruppeseks.bodtrd</groupId>
     <artifactId>Weapon</artifactId>
     <packaging>nbm</packaging>
     <build>

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dk.gruppeseks.weapon;
+package dk.gruppeseks.bodtrd.weapon;
 
 import dk.gruppeseks.bodtrd.common.data.ActionHandler;
 import dk.gruppeseks.bodtrd.common.data.Entity;
