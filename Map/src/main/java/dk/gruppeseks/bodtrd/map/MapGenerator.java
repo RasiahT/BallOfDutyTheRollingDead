@@ -7,7 +7,6 @@ package dk.gruppeseks.bodtrd.map;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
-import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
@@ -21,54 +20,50 @@ import java.util.Random;
 public class MapGenerator
 {
     private static Random _rand = new Random(); // TODO needs to be able to pick seed
-    private final static int WALL_AMOUNT = 50;
-    private final static int WALL_SIZE = 50;
 
     private static int _pathUp = 20;
     private static int _pathRight = 40;
     private static int _pathDown = 60;
     private static int _pathLeft = 80;
 
-    public static void generateMap(List<Entity> walls, GameData gameData)
+    public static void generateMap(List<Entity> walls, int mapWidth, int mapHeight, int wallSize, int wallAmount)
     {
-        int mapWidth = gameData.getMapWidth();
-        int mapHeight = gameData.getMapHeight();
-        int mapGridX = mapWidth / WALL_SIZE;
-        int mapGridY = mapHeight / WALL_SIZE;
+        int mapGridX = mapWidth / wallSize;
+        int mapGridY = mapHeight / wallSize;
 
         Position pos = new Position(0, 0);
 
         for (int i = 0; i < mapGridX; i++)
         {
-            walls.add(createWall(pos));
-            pos.setX(pos.getX() + WALL_SIZE);
+            walls.add(createWall(pos, wallSize));
+            pos.setX(pos.getX() + wallSize);
         }
 
         pos.setX(0);
-        pos.setY(mapHeight - WALL_SIZE);
+        pos.setY(mapHeight - wallSize);
 
         for (int i = 0; i < mapGridX; i++)
         {
-            walls.add(createWall(pos));
-            pos.setX(pos.getX() + WALL_SIZE);
+            walls.add(createWall(pos, wallSize));
+            pos.setX(pos.getX() + wallSize);
         }
 
         pos.setX(0);
-        pos.setY(WALL_SIZE);
+        pos.setY(wallSize);
 
         for (int i = 0; i < mapGridY - 2; i++)
         {
-            walls.add(createWall(pos));
-            pos.setY(pos.getY() + WALL_SIZE);
+            walls.add(createWall(pos, wallSize));
+            pos.setY(pos.getY() + wallSize);
         }
 
-        pos.setX(mapWidth - WALL_SIZE);
-        pos.setY(WALL_SIZE);
+        pos.setX(mapWidth - wallSize);
+        pos.setY(wallSize);
 
         for (int i = 0; i < mapGridY - 2; i++)
         {
-            walls.add(createWall(pos));
-            pos.setY(pos.getY() + WALL_SIZE);
+            walls.add(createWall(pos, wallSize));
+            pos.setY(pos.getY() + wallSize);
         }
 
         int wallCount = 0;
@@ -77,12 +72,11 @@ public class MapGenerator
         {
             while (true)
             {
-                pos.setX((_rand.nextInt(mapGridX) + 1) * WALL_SIZE);
-                pos.setY((_rand.nextInt(mapGridY) + 1) * WALL_SIZE);
-
+                pos.setX((_rand.nextInt(mapGridX)) * wallSize);
+                pos.setY((_rand.nextInt(mapGridY)) * wallSize);
                 if (checkValidWall(pos, walls))
                 {
-                    walls.add(createWall(pos));
+                    walls.add(createWall(pos, wallSize));
                     ++wallCount;
                     break;
                 }
@@ -94,38 +88,37 @@ public class MapGenerator
 
                 if (r < _pathUp)
                 {
-                    pos.setY(pos.getY() - WALL_SIZE);
+                    pos2.setY(pos.getY() - wallSize);
                 }
                 else if (r < _pathRight)
                 {
-                    pos.setY(pos.getX() + WALL_SIZE);
+                    pos2.setX(pos.getX() + wallSize);
                 }
                 else if (r < _pathDown)
                 {
-                    pos.setY(pos.getY() + WALL_SIZE);
+                    pos2.setY(pos.getY() + wallSize);
                 }
                 else if (r < _pathLeft)
                 {
-                    pos.setY(pos.getX() - WALL_SIZE);
+                    pos2.setX(pos.getX() - wallSize);
                 }
                 else
                 {
                     break;
                 }
-
-                if (checkValidWall(pos, walls))
+                if (checkValidWall(pos2, walls))
                 {
-                    walls.add(createWall(pos));
+                    walls.add(createWall(pos2, wallSize));
                     pos = pos2;
                     ++wallCount;
                 }
 
-                if (wallCount >= WALL_AMOUNT)
+                if (wallCount >= wallAmount)
                 {
                     break;
                 }
             }
-            if (wallCount >= WALL_AMOUNT)
+            if (wallCount >= wallAmount)
             {
                 break;
             }
@@ -144,14 +137,13 @@ public class MapGenerator
         return true;
     }
 
-    private static Entity createWall(Position pos)
+    private static Entity createWall(Position pos, int wallSize)
     {
         Entity wall = new Entity();
         wall.setType(EntityType.WALL);
 
-        // Position is pass by reference and thus we must copy its values. Otherwise all Walls will have the same position.
         wall.add(new Position(pos.getX(), pos.getY()));
-        wall.add(new Body(WALL_SIZE, WALL_SIZE));
+        wall.add(new Body(wallSize, wallSize));
         wall.add(ViewManager.getView(MapPlugin.WALL_IMAGE_FILE_PATH));
 
         return wall;

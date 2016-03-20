@@ -41,4 +41,27 @@ public class Position implements Serializable
     {
         this._y = y;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        Position other = (Position)obj;
+        if (_x != other.getX() || _y != other.getY())
+        {
+            return false;
+        }
+        return true;
+    }
 }
