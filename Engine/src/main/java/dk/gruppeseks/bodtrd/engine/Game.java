@@ -12,7 +12,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import dk.gruppeseks.bodtrd.common.data.ActionHandler;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
@@ -40,11 +41,13 @@ public class Game implements ApplicationListener
     private World _world;
     private Set<GamePluginSPI> _gamePlugins;
     private SpriteBatch _batch;
+    private ShapeRenderer _shapeRenderer;
     private AssetManager _assetManager;
 
     @Override
     public void create()
     {
+        _shapeRenderer = new ShapeRenderer();
         _batch = new SpriteBatch();
         _assetManager = new AssetManager();
 
@@ -129,7 +132,8 @@ public class Game implements ApplicationListener
 
     private void update()
     {
-        ActionHandler.setMousePosition(Gdx.input.getX(), Gdx.input.getY());
+        _world.getGameData().setMousePosition(Gdx.input.getX() + (int)(_camera.position.x - _camera.viewportWidth / 2),
+                -Gdx.input.getY() + Gdx.graphics.getHeight() + (int)(_camera.position.y - _camera.viewportHeight / 2));
         _world.update();
         _assetManager.update();
     }
@@ -163,6 +167,17 @@ public class Game implements ApplicationListener
         }
         _batch.end();
 
+        //Debug rendering
+        drawMouse();
+    }
+
+    private void drawMouse()
+    {
+        _shapeRenderer.setProjectionMatrix(_camera.combined);
+        _shapeRenderer.begin(ShapeType.Filled);
+        _shapeRenderer.setColor(1, 1, 0, 1);
+        _shapeRenderer.circle((float)_world.getGameData().getMousePosition().getX(), (float)_world.getGameData().getMousePosition().getY(), 10);
+        _shapeRenderer.end();
     }
 
     @Override

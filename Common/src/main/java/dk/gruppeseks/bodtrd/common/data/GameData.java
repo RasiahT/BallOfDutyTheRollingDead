@@ -23,9 +23,21 @@ public class GameData
     private double _deltaTime;
     private GameState _gameState;
 
-    private Position _playerPosition = new Position(0, 0);
+    private Position _mousePosition = new Position(0, 0);
 
+    private Position _playerPosition = new Position(0, 0);
     private Body _playerBody = new Body(0, 0);
+
+    public Position getMousePosition()
+    {
+        return _mousePosition;
+    }
+
+    public void setMousePosition(int x, int y)
+    {
+        _mousePosition.setX(x);
+        _mousePosition.setY(y);
+    }
 
     public Body getPlayerBody()
     {
