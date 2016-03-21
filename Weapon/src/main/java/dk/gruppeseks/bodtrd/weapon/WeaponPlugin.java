@@ -21,7 +21,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class WeaponPlugin implements GamePluginSPI
 {
-    public static final String BULLET_IMAGE_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/blackball.png";
+    public static final String BULLET_IMAGE_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/ballblack.png";
     private IEntityProcessor _processor;
     private World _world;
 

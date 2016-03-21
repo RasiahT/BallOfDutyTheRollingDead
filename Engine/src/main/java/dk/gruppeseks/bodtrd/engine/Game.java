@@ -140,10 +140,9 @@ public class Game implements ApplicationListener
 
     private void draw()
     {
-        Body pBody = _world.getGameData().getPlayerBody(); // todo preferably get rid of this in someway.
         Position pPosition = _world.getGameData().getPlayerPosition();
-        _camera.position.x = (float)(pPosition.getX() + pBody.getWidth() / 2);
-        _camera.position.y = (float)(pPosition.getY()) + pBody.getHeight() / 2;
+        _camera.position.x = (float)(pPosition.getX());
+        _camera.position.y = (float)(pPosition.getY());
 
         _camera.update();
         _batch.setProjectionMatrix(_camera.combined);
@@ -162,7 +161,7 @@ public class Game implements ApplicationListener
 
             if (_assetManager.isLoaded(view.getImageFilePath()))
             {
-                _batch.draw(_assetManager.get(view.getImageFilePath(), Texture.class), (float)pos.getX(), (float)pos.getY());
+                _batch.draw(_assetManager.get(view.getImageFilePath(), Texture.class), (float)pos.getX(), (float)pos.getY(), (float)body.getWidth(), (float)body.getHeight());
             }
         }
         _batch.end();
@@ -176,7 +175,7 @@ public class Game implements ApplicationListener
         _shapeRenderer.setProjectionMatrix(_camera.combined);
         _shapeRenderer.begin(ShapeType.Filled);
         _shapeRenderer.setColor(1, 1, 0, 1);
-        _shapeRenderer.circle((float)_world.getGameData().getMousePosition().getX(), (float)_world.getGameData().getMousePosition().getY(), 10);
+        _shapeRenderer.circle((float)_world.getGameData().getMousePosition().getX(), (float)_world.getGameData().getMousePosition().getY(), 7);
         _shapeRenderer.end();
     }
 

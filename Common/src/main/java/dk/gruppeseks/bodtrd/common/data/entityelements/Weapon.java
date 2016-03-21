@@ -5,16 +5,14 @@
  */
 package dk.gruppeseks.bodtrd.common.data.entityelements;
 
-import dk.gruppeseks.bodtrd.common.data.util.Vector2;
-
 /**
  *
  * @author Dzenita Hasic
  */
 public class Weapon
 {
+
     private boolean _isAttacking;
-    private Vector2 _orientation;
     private int _maxAmmunition;
     private int _currentAmmunition;
     private int _maxMagazineSize;
@@ -117,16 +115,6 @@ public class Weapon
     public void setCurrentMagazineSize(int currentMagazineSize)
     {
         this._currentMagazineSize = currentMagazineSize;
-    }
-
-    public Vector2 getOrientation()
-    {
-        return _orientation;
-    }
-
-    public void setOrientation(Vector2 orientation)
-    {
-        this._orientation = orientation;
     }
 
     public boolean isAttacking()

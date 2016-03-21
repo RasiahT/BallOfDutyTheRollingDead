@@ -46,15 +46,16 @@ public class Vector2
      * Rotates the vector counterclockwise if input is positive.
      *
      * @param degrees The degrees to rotate the vector.
+     * @return This vector, making it possible to chain calls.
      */
-    public void rotateDegrees(double degrees)
+    public Vector2 rotateDegrees(double degrees)
     {
         double radians = Math.toRadians(degrees);
         double px = x * Math.cos(radians) - y * Math.sin(radians);
         double py = x * Math.sin(radians) + y * Math.cos(radians);
         x = px;
         y = py;
-
+        return this;
     }
 
     /**
@@ -124,7 +125,7 @@ public class Vector2
      * Multiplies this vectors x and y with the input.
      *
      * @param multiplier The amount to multiply the vector with.
-     * @return This vector.
+     * @return This vector, making it possible to chain calls.
      */
     public Vector2 scalarMultiply(double multiplier)
     {
@@ -137,7 +138,7 @@ public class Vector2
      * Substract this vector with another vector.
      *
      * @param vector The substracting vector.
-     * @return This vector.
+     * @return This vector, making it possible to chain calls.
      */
     public Vector2 substractVector(Vector2 vector)
     {
@@ -150,7 +151,7 @@ public class Vector2
      * Adds another vector to this vector.
      *
      * @param vector The added vector.
-     * @return This vector.
+     * @return This vector, making it possible to chain calls.
      */
     public Vector2 addVector(Vector2 vector)
     {
@@ -165,7 +166,7 @@ public class Vector2
      *
      * @param x
      * @param y
-     * @return This vector.
+     * @return This vector, making it possible to chain calls.
      */
     public Vector2 addVector(double x, double y)
     {
@@ -200,8 +201,10 @@ public class Vector2
 
     /**
      * Normalizes this vector. i.e (2,1) would result in (1, 0.5) and (1,1) would result in (1,1).
+     *
+     * @return This vector, making it possible to chain calls.
      */
-    public void normalize()
+    public Vector2 normalize()
     {
         double length = this.getMagnitude();
         if (!(x == 0 && y == 0))
@@ -209,7 +212,7 @@ public class Vector2
             x /= length;
             y /= length;
         }
-
+        return this;
     }
 
     /**
@@ -299,7 +302,7 @@ public class Vector2
      * Sets the magnitude of this vector.
      *
      * @param i The magnitude to be set to this vector.
-     * @return This vector.
+     * @return This vector, making it possible to chain calls.
      */
     public Vector2 setMagnitude(double i)
     {

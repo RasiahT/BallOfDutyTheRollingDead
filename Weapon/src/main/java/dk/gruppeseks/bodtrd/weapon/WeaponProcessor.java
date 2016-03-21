@@ -69,18 +69,23 @@ public class WeaponProcessor implements IEntityProcessor
     private void attack(World world, Entity e, Weapon wep)
     {
         Position p = e.get(Position.class);
+        Body b = e.get(Body.class);
+
+        Position center = new Position(p.getX() + b.getWidth() / 2, p.getY() + b.getHeight() / 2);
         Position mousePos = world.getGameData().getMousePosition();
-        wep.setOrientation(new Vector2(mousePos.getX() - p.getX(), mousePos.getY() - p.getY()));
-        System.out.println("Mouse x,y: " + mousePos.getX() + ", " + mousePos.getY() + "   entity x, y: " + p.getX() + ", " + p.getY());
-        Vector2 orientation = wep.getOrientation().setMagnitude(e.get(Body.class).getWidth() / 2);
-        Position position = new Position(p.getX() + orientation.getX(), p.getY() + orientation.getY());
-        Velocity velocity = new Velocity(wep.getOrientation().setMagnitude(500));//;TODO: bulletSpeed
+
+        Vector2 orientation = new Vector2(mousePos.getX() - center.getX(), mousePos.getY() - center.getY()).setMagnitude(b.getWidth() / 2);
+
+        Body body = new Body(15, 15);
+        Position position = new Position(center.getX() + orientation.getX() - body.getWidth() / 2, center.getY() + orientation.getY() - body.getHeight() / 2);
+
+        Velocity velocity = new Velocity(orientation.setMagnitude(500));//;TODO: bulletSpeed
 
         Entity bullet = new Entity();
         bullet.setType(PROJECTILE);
         bullet.add(position);
         bullet.add(velocity);
-        bullet.add(new Body(20, 20));
+        bullet.add(body);
         bullet.add(ViewManager.getView(WeaponPlugin.BULLET_IMAGE_FILE_PATH));
         world.addEntity(bullet);
 
