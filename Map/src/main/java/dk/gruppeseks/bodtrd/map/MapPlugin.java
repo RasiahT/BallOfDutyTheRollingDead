@@ -24,7 +24,7 @@ public class MapPlugin implements GamePluginSPI
     private final static String DIRT_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_dirt.png";
 
     private final static int MAP_WIDTH = 2000; // Be divisible by WALL_SIZE
-    private final static int MAP_HEIGHT = 2000; // Be divisible by WALL_SIZE
+    private final static int MAP_HEIGHT = 1000; // Be divisible by WALL_SIZE
     private final static int WALLS_PER_MEGA_PIXEL = 70;
     private final static int MEGA_PIXEL = 1000 * 1000;
 
@@ -37,7 +37,7 @@ public class MapPlugin implements GamePluginSPI
     public void stop()
     {
         ViewManager.removeView(WALL_IMAGE_FILE_PATH);
-        ViewManager.removeView(WALL_IMAGE_FILE_PATH);
+        ViewManager.removeView(DIRT_IMAGE_FILE_PATH);
 
         for (Entity wall : _walls)
         {
@@ -51,11 +51,12 @@ public class MapPlugin implements GamePluginSPI
         Installer.Plugin = this;
 
         ViewManager.createView(WALL_IMAGE_FILE_PATH);
-        ViewManager.createView(WALL_IMAGE_FILE_PATH);
+        ViewManager.createView(DIRT_IMAGE_FILE_PATH);
 
         this._world = world;
         _world.getGameData().setMapWidth(MAP_WIDTH);
-        _world.getGameData().setMapHeight(WALL_SIZE);
+        _world.getGameData().setMapHeight(MAP_HEIGHT);
+        _world.getGameData().setMapTextureView(ViewManager.getView(DIRT_IMAGE_FILE_PATH));
 
         int wallAmount = WALLS_PER_MEGA_PIXEL * MAP_HEIGHT * MAP_WIDTH / MEGA_PIXEL;
         MapGenerator.generateMap(_walls, MAP_WIDTH, MAP_HEIGHT, WALL_SIZE, wallAmount);

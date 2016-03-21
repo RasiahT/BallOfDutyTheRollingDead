@@ -7,6 +7,7 @@ package dk.gruppeseks.bodtrd.common.data;
 
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
+import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 
 /**
  *
@@ -16,6 +17,7 @@ public class GameData
 {
     private int _mapWidth;
     private int _mapHeight;
+    private View _mapTextureView;
 
     private int _displayWidth;
     private int _displayHeight;
@@ -118,4 +120,15 @@ public class GameData
     {
         this._mapHeight = mapHeight;
     }
+
+    public View getMapTextureView()
+    {
+        return _mapTextureView;
+    }
+
+    public void setMapTextureView(View _mapTextureView)
+    {
+        this._mapTextureView = _mapTextureView;
+    }
+
 }

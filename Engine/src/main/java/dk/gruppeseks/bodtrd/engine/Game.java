@@ -11,6 +11,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -43,6 +44,7 @@ public class Game implements ApplicationListener
     private SpriteBatch _batch;
     private ShapeRenderer _shapeRenderer;
     private AssetManager _assetManager;
+    private Texture background;
 
     @Override
     public void create()
@@ -72,6 +74,7 @@ public class Game implements ApplicationListener
         }
 
         loadViews();
+        loadBackground();
     }
 
     private final LookupListener lookupListener = new LookupListener()
@@ -96,7 +99,9 @@ public class Game implements ApplicationListener
                     _gamePlugins.remove(oldPlugin);
                 }
             }
+
             loadViews();
+            loadBackground();
         }
     };
 
@@ -108,7 +113,7 @@ public class Game implements ApplicationListener
     @Override
     public void render()
     {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, (float)0.6, (float)0.2, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         _world.getGameData().setDeltaTime(Gdx.graphics.getDeltaTime());
@@ -122,10 +127,23 @@ public class Game implements ApplicationListener
         for (View view : ViewManager.views())
         {
             String imagePath = view.getImageFilePath();
-
             if (!_assetManager.isLoaded(imagePath, Texture.class))
             {
                 _assetManager.load(imagePath, Texture.class);
+            }
+        }
+        _assetManager.finishLoading();
+    }
+
+    private void loadBackground()
+    {
+        View backgroundTextureView = _world.getGameData().getMapTextureView();
+        if (backgroundTextureView != null)
+        {
+            if (_assetManager.isLoaded(backgroundTextureView.getImageFilePath()))
+            {
+                background = _assetManager.get(backgroundTextureView.getImageFilePath(), Texture.class);
+                background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
             }
         }
     }
@@ -147,8 +165,16 @@ public class Game implements ApplicationListener
 
         _camera.update();
         _batch.setProjectionMatrix(_camera.combined);
-
         _batch.begin();
+
+        if (background != null)
+        {
+            int mapWidth = _world.getGameData().getMapWidth();
+            int mapHeight = _world.getGameData().getMapHeight();
+
+            _batch.draw(background, 0, 0, background.getWidth() * (mapWidth / background.getWidth()), background.getHeight() * (mapHeight / background.getHeight()), 0, mapHeight / background.getHeight(), mapWidth / background.getWidth(), 0);
+        }
+
         for (Entity e : _world.entities())
         {
             View view = e.get(View.class);
