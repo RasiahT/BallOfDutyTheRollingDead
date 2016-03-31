@@ -19,10 +19,12 @@ public class Entity
     private int _ID;
     private static AtomicInteger _count = new AtomicInteger(0);
     private EntityType _type;
+    private EntityState _state;
 
     public Entity()
     {
         _ID = _count.incrementAndGet();
+        _state = EntityState.JUST_CREATED;
     }
 
     public void setType(EntityType type)
@@ -33,6 +35,16 @@ public class Entity
     public EntityType getType()
     {
         return _type;
+    }
+
+    public EntityState getState()
+    {
+        return _state;
+    }
+
+    public void setState(EntityState state)
+    {
+        this._state = state;
     }
 
     public void add(Object data)

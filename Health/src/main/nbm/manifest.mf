@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Install: dk/gruppeseks/bodtrd/health/Installer.class
+OpenIDE-Module-Localizing-Bundle: dk/gruppeseks/bodtrd/health/Bundle.properties
+

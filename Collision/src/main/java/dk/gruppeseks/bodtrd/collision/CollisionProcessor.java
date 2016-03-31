@@ -6,8 +6,13 @@
 package dk.gruppeseks.bodtrd.collision;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.EntityState;
+import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Health.DamageInstance;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Owner;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
@@ -35,10 +40,6 @@ public class CollisionProcessor implements IEntityProcessor
             {
                 continue;
             }
-            double startX = handledPos.getX();
-            double startY = handledPos.getY();
-
-            boolean collision = false;
 
             for (Entity ent : entities)
             {
@@ -51,59 +52,94 @@ public class CollisionProcessor implements IEntityProcessor
                 }
                 if (CollisionHandler.isColliding(handled, ent))
                 {
-                    Position firstPos = CollisionHandler.collisionResponse(handled, ent);
-                    handledPos.setX(firstPos.getX());
-                    handledPos.setY(firstPos.getY());
-
-                    for (Entity ent2 : entities) // Checks if it collides with anything.
-                    {
-                        CollisionData ent2Data = ent.get(CollisionData.class);
-
-                        if (ent2.getID() == handled.getID() || ent2.getID() == ent.getID() || ent2Data == null)
-                        {
-                            continue;
-                        }
-                        if (CollisionHandler.isColliding(handled, ent2))
-                        {
-                            for (Entity ent3 : entities)
-                            {
-                                CollisionData ent3Data = ent.get(CollisionData.class);
-
-                                if (ent3.getID() == handled.getID() || ent3.getID() == ent.getID()
-                                        || ent3.getID() == ent2.getID() || ent3Data == null)
-                                {
-                                    continue;
-                                }
-                                if (CollisionHandler.isColliding(handled, ent3))
-                                {
-                                    handledPos.setX(startX);
-                                    handledPos.setY(startY); // If it even collides after a third collision correction, then dont do any corrections at all.
-                                    collision = true;
-                                    break;
-                                }
-
-                            }
-                            if (!collision)
-                            {
-                                // if it doesnt collide with a third object after the second collision correction, put it to the secondcalculated position.
-                                Position response = CollisionHandler.collisionResponse(handled, ent2);
-                                handledPos.setX(response.getX());
-                                handledPos.setY(response.getY());
-                            }
-                            collision = true;
-                            break;
-                        }
-
-                    }
-                    if (!collision) // if it doesnt collide with a second object, put it to the first calculated position.
-                    {
-                        handledPos.setX(firstPos.getX());
-                        handledPos.setY(firstPos.getY());
-                    }
-                    collision = true; // with the collided object anymore.
-                    break;
+                    handleCollision(handled, ent, entities);
                 }
             }
+        }
+    }
+
+    private void handleCollision(Entity handled, Entity ent, Collection<Entity> entities)
+    {
+        switch (handled.getType())
+        {
+            case PLAYER:
+            {
+                if (ent.getType() == EntityType.PROJECTILE)
+                {
+
+                }
+                else if (ent.getType() == EntityType.WALL)
+                {
+                    calculateBounceResponse(handled, ent, entities);
+                }
+                break;
+            }
+            case PROJECTILE:
+            {
+                if (ent.getType() == EntityType.PLAYER)
+                {
+                    Owner o = handled.get(Owner.class);
+                    if (o == null)
+                    {
+                        ent.get(Health.class).addDamageInstance(new DamageInstance(10, 0));
+                    }
+                    else
+                    {
+                        ent.get(Health.class).addDamageInstance(new DamageInstance(10, o.getId()));
+                    }
+                }
+                else if (ent.getType() == EntityType.WALL)
+                {
+                    handled.setState(EntityState.DESTROYED);
+                }
+            }
+        }
+    }
+
+    private void calculateBounceResponse(Entity e1, Entity e2, Collection<Entity> entities)
+    {
+
+        Position firstPos = CollisionHandler.collisionResponse(e1, e2);
+        Position handledPos = e1.get(Position.class);
+        handledPos.setX(firstPos.getX());
+        handledPos.setY(firstPos.getY());
+
+        for (Entity e3 : entities) // Checks if it collides with anything.
+        {
+            CollisionData e3Data = e3.get(CollisionData.class);
+
+            if (e3.getID() == e1.getID() || e3.getID() == e2.getID() || e3Data == null)
+            {
+                continue;
+            }
+            if (CollisionHandler.isColliding(e1, e3))
+            {
+                for (Entity e4 : entities)
+                {
+                    CollisionData e4Data = e4.get(CollisionData.class);
+
+                    if (e4.getID() == e1.getID() || e4.getID() == e2.getID()
+                            || e4.getID() == e3.getID() || e4Data == null)
+                    {
+                        continue;
+                    }
+                    if (CollisionHandler.isColliding(e1, e4))
+                    {
+                        double startX = handledPos.getX();
+                        double startY = handledPos.getY();
+
+                        handledPos.setX(startX);
+                        handledPos.setY(startY); // If it even collides after a third collision correction, then dont do any corrections at all.
+                        break;
+                    }
+
+                }
+                // if it doesnt collide with a third object after the second collision correction, put it to the secondcalculated position.
+                Position response = CollisionHandler.collisionResponse(e1, e3);
+                handledPos.setX(response.getX());
+                handledPos.setY(response.getY());
+            }
+            break;
         }
     }
 
