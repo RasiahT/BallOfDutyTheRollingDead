@@ -8,6 +8,7 @@ package dk.gruppeseks.bodtrd.collision;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import static dk.gruppeseks.bodtrd.common.data.entityelements.Body.Geometry.CIRCLE;
 import static dk.gruppeseks.bodtrd.common.data.entityelements.Body.Geometry.RECTANGLE;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Owner;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 
@@ -17,6 +18,48 @@ import dk.gruppeseks.bodtrd.common.data.util.Vector2;
  */
 public class CollisionHandler
 {
+    private static boolean isConcrete(int flag)
+    {
+        return (flag & CollisionFlags.CONCRETE) == CollisionFlags.CONCRETE;
+    }
+
+    private static boolean isElusive(int flag)
+    {
+        return (flag & CollisionFlags.ELUSIVE) == CollisionFlags.ELUSIVE;
+    }
+
+    private static boolean canCollide(int flag1, int flag2)
+    {
+        boolean c1 = isConcrete(flag1);
+        boolean c2 = isConcrete(flag2);
+        return (c1 && c2) || (c1 && isElusive(flag2)) || (c2 && isElusive(flag1));
+    }
+
+    public static void addCollisionData(Entity e)
+    {
+        CollisionData data = new CollisionData();
+
+        switch (e.getType())
+        {
+            case PLAYER:
+            {
+                data.setCollisionFlag(CollisionFlags.CONCRETE);
+                break;
+            }
+            case PROJECTILE:
+            {
+                data.setCollisionFlag(CollisionFlags.ELUSIVE);
+                break;
+            }
+            case WALL:
+            {
+                data.setCollisionFlag(CollisionFlags.CONCRETE);
+                break;
+            }
+        }
+
+        e.add(data);
+    }
 
     /**
      * Check if 2 game objects are colliding.
@@ -29,6 +72,23 @@ public class CollisionHandler
      */
     public static boolean isColliding(Entity e1, Entity e2)
     {
+        CollisionData cd1 = e1.get(CollisionData.class);
+        CollisionData cd2 = e2.get(CollisionData.class);
+
+        if (!canCollide(cd1.getCollisionFlag(), cd2.getCollisionFlag()))
+        {
+            return false;
+        }
+
+        Owner ow1 = e1.get(Owner.class);
+        Owner ow2 = e2.get(Owner.class);
+
+        // TODO find out if objects owned by the same owner can collide, atm they can.
+        if ((ow1 != null && ow1.getId() == e2.getID()) || (ow2 != null && ow2.getId() == e1.getID()))
+        {
+            return false;
+        }
+
         CollisionDAO o1 = new CollisionDAO(e1);
         CollisionDAO o2 = new CollisionDAO(e2);
 
