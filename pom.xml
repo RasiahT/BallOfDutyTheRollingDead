@@ -65,6 +65,8 @@
         <module>Weapon</module>
         <module>Movement</module>
         <module>Collision</module>
+        <module>Health</module>
+        <module>LifeState</module>
     </modules>
 
     <properties>

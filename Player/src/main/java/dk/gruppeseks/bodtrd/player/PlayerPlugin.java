@@ -1,12 +1,14 @@
 package dk.gruppeseks.bodtrd.player;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.EntityState;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body.Geometry;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
@@ -61,11 +63,13 @@ public class PlayerPlugin implements GamePluginSPI
     {
         Entity entity = new Entity();
         entity.setType(EntityType.PLAYER);
+        entity.setState(EntityState.ALIVE);
 
         entity.add(new Position(200, 100));
         entity.add(new Body(50, 50, Geometry.CIRCLE));
         entity.add(new Velocity());
         entity.add(ViewManager.getView(PLAYER_IMAGE_FILE_PATH));
+        entity.add(new Health(100, 3));
 
         return entity;
     }
