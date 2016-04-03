@@ -27,7 +27,7 @@ public class MovementPlugin implements GamePluginSPI
 
         _world = world;
         _processor = new MovementProcessor();
-        _world.addProcessor(2, _processor);
+        _world.addProcessor(3, _processor);
     }
 
     @Override

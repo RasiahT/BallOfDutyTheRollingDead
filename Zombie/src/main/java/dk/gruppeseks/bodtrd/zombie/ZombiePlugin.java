@@ -39,7 +39,7 @@ public class ZombiePlugin implements GamePluginSPI
     {
         Installer.Plugin = this;
 
-        ViewManager.createView(ZOMBIE_IMAGE_FILE_PATH);
+        ViewManager.createView(ZOMBIE_IMAGE_FILE_PATH, false);
 
         _world = world;
         _zombies = new HashMap();

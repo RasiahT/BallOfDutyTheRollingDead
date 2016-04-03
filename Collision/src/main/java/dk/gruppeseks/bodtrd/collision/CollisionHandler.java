@@ -56,6 +56,11 @@ public class CollisionHandler
                 data.setCollisionFlag(CollisionFlags.CONCRETE);
                 break;
             }
+            case ENEMY:
+            {
+                data.setCollisionFlag(CollisionFlags.CONCRETE);
+                break;
+            }
         }
 
         e.add(data);

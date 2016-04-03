@@ -35,7 +35,7 @@ public class WeaponPlugin implements GamePluginSPI
         _world = world;
 
         _processor = new WeaponProcessor();
-        _world.addProcessor(3, _processor);
+        _world.addProcessor(2, _processor);
         _world.addEnthusiast(PLAYER, _processor);
 
         for (Entity e : _world.entities())

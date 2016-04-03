@@ -33,6 +33,7 @@ public class CollisionPlugin implements GamePluginSPI
         world.addEnthusiast(EntityType.PROJECTILE, _processor);
         world.addEnthusiast(EntityType.PLAYER, _processor);
         world.addEnthusiast(EntityType.WALL, _processor);
+        world.addEnthusiast(EntityType.ENEMY, _processor);
 
         for (Entity e : _world.entities())
         {
@@ -47,6 +48,7 @@ public class CollisionPlugin implements GamePluginSPI
         _world.removeEnthusiast(EntityType.PROJECTILE, _processor);
         _world.removeEnthusiast(EntityType.PLAYER, _processor);
         _world.removeEnthusiast(EntityType.WALL, _processor);
+        _world.removeEnthusiast(EntityType.ENEMY, _processor);
         for (Entity e : _world.entities())
         {
             e.remove(CollisionData.class);

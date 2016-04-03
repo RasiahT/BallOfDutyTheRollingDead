@@ -92,6 +92,15 @@ public class CollisionProcessor implements IEntityProcessor
                 {
                     handled.setState(EntityState.DESTROYED);
                 }
+                break;
+            }
+            case ENEMY:
+            {
+                if (ent.getType() == EntityType.WALL)
+                {
+                    calculateBounceResponse(handled, ent, entities);
+                }
+                break;
             }
         }
     }

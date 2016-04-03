@@ -47,10 +47,14 @@ public class World
     {
         for (Integer priority : _processors.keySet())
         {
-            for (IEntityProcessor processor : _processors.get(priority))
+            _processors.get(priority).parallelStream().forEach((processor) ->
+                    {
+                        processor.process(this);
+                    });
+            /*for (IEntityProcessor processor : _processors.get(priority))
             {
                 processor.process(this);
-            }
+            }*/
         }
     }
 
