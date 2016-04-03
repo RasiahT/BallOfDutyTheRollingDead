@@ -67,6 +67,8 @@
         <module>Collision</module>
         <module>Health</module>
         <module>LifeState</module>
+        <module>Zombie</module>
+        <module>AI</module>
     </modules>
 
     <properties>
