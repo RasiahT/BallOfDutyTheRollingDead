@@ -72,7 +72,7 @@ public class ZombiePlugin implements GamePluginSPI
         Entity entity = new Entity();
         entity.setType(EntityType.ENEMY);
         int diameter = (int)(BASE_DIAMETER + Math.random() * DIAMETER_VARIABLE);
-        entity.add(new Position(diameter + Math.random() * (_world.getGameData().getMapWidth() - diameter), diameter + Math.random() * (_world.getGameData().getMapHeight() - diameter)));
+        entity.add(new Position(diameter + Math.random() * (_world.getMap().getWidth() - diameter), diameter + Math.random() * (_world.getMap().getWidth() - diameter)));
         entity.add(new Body(diameter, diameter, Body.Geometry.CIRCLE));
         entity.add(new Velocity());
         entity.add(ViewManager.getView(ZOMBIE_IMAGE_FILE_PATH));

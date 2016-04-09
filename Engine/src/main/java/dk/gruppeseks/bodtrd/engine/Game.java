@@ -24,6 +24,7 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
+import dk.gruppeseks.bodtrd.common.services.MapSPI;
 import dk.gruppeseks.bodtrd.managers.GameInputManager;
 import java.util.Collection;
 import java.util.Set;
@@ -47,6 +48,7 @@ public class Game implements ApplicationListener
     private AssetManager _assetManager;
     private Texture background;
     private BitmapFont _font;
+    private MapSPI _map;
 
     @Override
     public void create()
@@ -62,6 +64,9 @@ public class Game implements ApplicationListener
         gameData.setDisplayWidth(Gdx.graphics.getWidth());
         gameData.setDisplayHeight(Gdx.graphics.getHeight());
         _camera = new OrthographicCamera(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+
+        _map = _lookup.lookup(MapSPI.class);
+        _map.generateMap(_world);
 
         Gdx.input.setInputProcessor(new GameInputManager());
 
@@ -140,7 +145,7 @@ public class Game implements ApplicationListener
 
     private void loadBackground()
     {
-        View backgroundTextureView = _world.getGameData().getMapTextureView();
+        View backgroundTextureView = _world.getMap().getMapTextureView();
         if (backgroundTextureView != null)
         {
             if (_assetManager.isLoaded(backgroundTextureView.getImageFilePath()))
@@ -177,8 +182,8 @@ public class Game implements ApplicationListener
         {
             int backgroundWidth = background.getWidth();
             int backgroundHeight = background.getHeight();
-            int backgroundRepeatWidth = _world.getGameData().getMapWidth() / backgroundWidth;
-            int backgroundRepeatHeight = _world.getGameData().getMapHeight() / backgroundHeight;
+            int backgroundRepeatWidth = _world.getMap().getWidth() / backgroundWidth;
+            int backgroundRepeatHeight = _world.getMap().getHeight() / backgroundHeight;
 
             _batch.draw(background, 0, 0, backgroundWidth * backgroundRepeatWidth, backgroundHeight * backgroundRepeatHeight, 0, backgroundRepeatHeight, backgroundRepeatWidth, 0);
         }
@@ -193,20 +198,19 @@ public class Game implements ApplicationListener
             {
                 continue;
             }
-            
 
             if (_assetManager.isLoaded(view.getImageFilePath()))
             {
-                Texture texture =_assetManager.get(view.getImageFilePath(), Texture.class);
+                Texture texture = _assetManager.get(view.getImageFilePath(), Texture.class);
                 if (view.isRepeat())
                 {
                     texture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-                    
+
                     int textureWidth = texture.getWidth();
                     int textureHeight = texture.getHeight();
                     int textureRepeatWidth = body.getWidth() / textureWidth;
                     int textureRepeatHeight = body.getHeight() / textureWidth;
-                    
+
                     _batch.draw(texture, (float)pos.getX(), (float)pos.getY(), textureWidth * textureRepeatWidth, textureHeight * textureRepeatHeight, 0, textureRepeatHeight, textureRepeatWidth, 0);
                 }
                 else
@@ -234,7 +238,7 @@ public class Game implements ApplicationListener
     private void drawFps()
     {
         Position pPosition = _world.getGameData().getPlayerPosition();
-        _font.draw(_batch, "fps: " + Gdx.graphics.getFramesPerSecond(), (float) (pPosition.getX() - 600), (float) (pPosition.getY() + 370)); // Need to create HUD
+        _font.draw(_batch, "fps: " + Gdx.graphics.getFramesPerSecond(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 370)); // Need to create HUD
     }
 
     @Override

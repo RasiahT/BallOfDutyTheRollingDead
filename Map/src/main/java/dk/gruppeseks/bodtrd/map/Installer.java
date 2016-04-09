@@ -5,12 +5,12 @@
  */
 package dk.gruppeseks.bodtrd.map;
 
-import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
+import dk.gruppeseks.bodtrd.common.services.MapSPI;
 import org.openide.modules.ModuleInstall;
 
 public class Installer extends ModuleInstall
 {
-    public static GamePluginSPI Plugin = null;
+    public static MapSPI Plugin = null;
 
     @Override
     public void restored()
@@ -23,8 +23,7 @@ public class Installer extends ModuleInstall
     {
         if (Plugin != null)
         {
-            Plugin.stop();
+            Plugin.unloadMap();
         }
     }
-
 }

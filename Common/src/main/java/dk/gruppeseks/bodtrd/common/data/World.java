@@ -21,6 +21,7 @@ public class World
     private final Map<Integer, Set<IEntityProcessor>> _processors = new ConcurrentHashMap<>();
     private final Map<EntityType, Set<IEntityProcessor>> _enthusiasts = new ConcurrentHashMap<>();
     private final GameData _gameData;
+    private dk.gruppeseks.bodtrd.common.data.Map _map;
 
     public World(GameData gameData)
     {
@@ -31,6 +32,16 @@ public class World
             Set<IEntityProcessor> enthusiasts = ConcurrentHashMap.newKeySet();
             _enthusiasts.put(e, enthusiasts);
         }
+    }
+
+    public dk.gruppeseks.bodtrd.common.data.Map getMap()
+    {
+        return _map;
+    }
+
+    public void setMap(dk.gruppeseks.bodtrd.common.data.Map map)
+    {
+        this._map = map;
     }
 
     public GameData getGameData()

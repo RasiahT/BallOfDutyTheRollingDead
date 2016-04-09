@@ -8,7 +8,6 @@ package dk.gruppeseks.bodtrd.common.data;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body.Geometry;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
-import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 
 /**
  *
@@ -16,10 +15,6 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.View;
  */
 public class GameData
 {
-    private int _mapWidth;
-    private int _mapHeight;
-    private View _mapTextureView;
-
     private int _displayWidth;
     private int _displayHeight;
 
@@ -101,35 +96,4 @@ public class GameData
     {
         this._deltaTime = deltaTime;
     }
-
-    public int getMapWidth()
-    {
-        return _mapWidth;
-    }
-
-    public int getMapHeight()
-    {
-        return _mapHeight;
-    }
-
-    public void setMapWidth(int mapWidth)
-    {
-        this._mapWidth = mapWidth;
-    }
-
-    public void setMapHeight(int mapHeight)
-    {
-        this._mapHeight = mapHeight;
-    }
-
-    public View getMapTextureView()
-    {
-        return _mapTextureView;
-    }
-
-    public void setMapTextureView(View _mapTextureView)
-    {
-        this._mapTextureView = _mapTextureView;
-    }
-
 }
