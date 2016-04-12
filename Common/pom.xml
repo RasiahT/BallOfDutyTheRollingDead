@@ -24,6 +24,7 @@
                         <publicPackage>dk.gruppeseks.bodtrd.common.data.utill</publicPackage>
                         <publicPackage>dk.gruppeseks.bodtrd.common.data.util</publicPackage>
                         <publicPackage>dk.gruppeseks.bodtrd.common.data.entityelements.Health</publicPackage>
+                        <publicPackage>dk.gruppeseks.bodtrd.common.exceptions</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

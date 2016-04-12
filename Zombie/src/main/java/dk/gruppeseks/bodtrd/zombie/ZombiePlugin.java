@@ -41,6 +41,7 @@ public class ZombiePlugin implements GamePluginSPI
     @Override
     public void start(World world)
     {
+
         Installer.Plugin = this;
 
         ViewManager.createView(ZOMBIE_IMAGE_FILE_PATH, false);
@@ -48,22 +49,18 @@ public class ZombiePlugin implements GamePluginSPI
         _world = world;
         _zombies = new HashMap();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 2; i++)
         {
             Entity zombie = createZombieEntity();
             _zombies.put(zombie.getID(), zombie);
             world.addEntity(zombie);
         }
 
-        _processor = new ZombieProcessor(_zombies);
+        _ai = _lookup.lookup(AISPI.class);
+
+        _processor = new ZombieProcessor(_zombies, _ai);
         _world.addProcessor(1, _processor);
 
-        _ai = _lookup.lookup(AISPI.class);
-        Position[] path = _ai.getPath(new Position(13, 17), new Position(167, 176), world);
-        for (Position pos : path)
-        {
-            System.out.println(pos);
-        }
     }
 
     @Override
@@ -83,7 +80,7 @@ public class ZombiePlugin implements GamePluginSPI
         Entity entity = new Entity();
         entity.setType(EntityType.ENEMY);
         int diameter = (int)(BASE_DIAMETER + Math.random() * DIAMETER_VARIABLE);
-        entity.add(new Position(diameter + Math.random() * (_world.getMap().getWidth() - diameter), diameter + Math.random() * (_world.getMap().getWidth() - diameter)));
+        entity.add(new Position(diameter * 2 + Math.random() * (_world.getMap().getWidth() - diameter * 2), diameter * 2 + Math.random() * (_world.getMap().getHeight() - diameter * 2)));
         entity.add(new Body(diameter, diameter, Body.Geometry.CIRCLE));
         entity.add(new Velocity());
         entity.add(ViewManager.getView(ZOMBIE_IMAGE_FILE_PATH));
