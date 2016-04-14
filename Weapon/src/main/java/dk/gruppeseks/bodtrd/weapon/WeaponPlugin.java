@@ -41,7 +41,7 @@ public class WeaponPlugin implements GamePluginSPI
 
         for (Entity e : _world.entities())
         {
-            if (e.getType() == PLAYER)
+            if (e.getType() == PLAYER) // If player gets loaded after weapon, this is bad.
             {
                 Weapon wep = new Weapon();
                 wep.setAttackSpeed(0.4f);
