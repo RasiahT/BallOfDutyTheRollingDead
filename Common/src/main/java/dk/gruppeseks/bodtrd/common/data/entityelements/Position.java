@@ -5,6 +5,7 @@
  */
 package dk.gruppeseks.bodtrd.common.data.entityelements;
 
+import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,19 @@ public class Position implements Serializable
     public String toString()
     {
         return "Position{" + "_x=" + _x + ", _y=" + _y + '}';
+    }
+
+    /**
+     * *
+     * Constructs a position at the end of the vector (Vector starting point being the inputted position)
+     *
+     * @param pos The start position of the vector.
+     * @param vec The vector the new position will be at the end of.
+     */
+    public Position(Position pos, Vector2 vec)
+    {
+        this._x = pos.getX() + vec.getX();
+        this._y = pos.getY() + vec.getY();
     }
 
     public Position(double x, double y)

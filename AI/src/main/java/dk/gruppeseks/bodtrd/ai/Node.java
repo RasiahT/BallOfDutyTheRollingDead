@@ -42,12 +42,12 @@ public class Node
         this._depth = depth;
     }
 
-    public double heuristic(int goalX, int goalY)
+    public double getTotalCost(int goalX, int goalY)
     {
-        double a = _gridX - goalX;
-        double b = _gridY - goalY;
-        double c = Math.sqrt(a * a + b * b);
-        return _depth + c;
+        double dx = _gridX - goalX;
+        double dy = _gridY - goalY;
+        double directLineDistance = Math.sqrt(dx * dx + dy * dy);
+        return _depth + directLineDistance * 5; // 15 is the fastest weight after several random tests, but 5 is a lot more accurate and only about 10% slower.
     }
 
     public List<Node> getPath()

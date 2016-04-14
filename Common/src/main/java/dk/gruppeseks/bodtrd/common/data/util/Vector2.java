@@ -1,5 +1,7 @@
 package dk.gruppeseks.bodtrd.common.data.util;
 
+import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
+
 /**
  *
  * @author Dzenita Hasic
@@ -8,6 +10,18 @@ public class Vector2
 {
     private double x;
     private double y;
+
+    /**
+     * Constructs vector from pos1 to pos2
+     *
+     * @param pos1 Starting point of vector
+     * @param pos2 End point of vector
+     */
+    public Vector2(Position pos1, Position pos2)
+    {
+        this.x = pos2.getX() - pos1.getX();
+        this.y = pos2.getY() - pos1.getY();
+    }
 
     /**
      * Copies another vector.

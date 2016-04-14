@@ -109,10 +109,8 @@ public class MapGenerator
 
     private static boolean createWall(Position pos, List<Entity> walls, Map map)
     {
-        int x = (int)Math.floor(pos.getX() / map.getGridCellSize());
-        int y = (int)Math.floor(pos.getY() / map.getGridCellSize());
-
-        System.out.println(x + " " + y);
+        int x = (int)(pos.getX() / map.getGridCellSize());
+        int y = (int)(pos.getY() / map.getGridCellSize());
         // Return if a wall is already present in the grid.
         if (!map.getGrid()[x][y])
         {
