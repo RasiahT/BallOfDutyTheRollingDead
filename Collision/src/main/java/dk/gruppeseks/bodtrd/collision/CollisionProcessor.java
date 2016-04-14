@@ -10,6 +10,7 @@ import dk.gruppeseks.bodtrd.common.data.EntityState;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Damage;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.DamageInstance;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Owner;
@@ -31,6 +32,10 @@ public class CollisionProcessor implements IEntityProcessor
 
         for (Entity handled : entities)
         {
+            if (handled.getState() == EntityState.DESTROYED)
+            {
+                continue;
+            }
             Position handledPos = handled.get(Position.class);
             Velocity handledVel = handled.get(Velocity.class);
             Body handledBody = handled.get(Body.class);
@@ -43,13 +48,21 @@ public class CollisionProcessor implements IEntityProcessor
 
             for (Entity ent : entities)
             {
-
+                if (handled.getState() == EntityState.DESTROYED)
+                {
+                    break;
+                }
+                if (ent.getState() == EntityState.DESTROYED)
+                {
+                    continue;
+                }
                 CollisionData entData = ent.get(CollisionData.class);
 
                 if (ent.getID() == handled.getID() || entData == null)
                 {
                     continue;
                 }
+
                 if (CollisionHandler.isColliding(handled, ent))
                 {
                     handleCollision(handled, ent, entities);
@@ -76,17 +89,18 @@ public class CollisionProcessor implements IEntityProcessor
             }
             case PROJECTILE:
             {
-                if (ent.getType() == EntityType.PLAYER)
+                if (ent.getType() == EntityType.ENEMY)
                 {
                     Owner o = handled.get(Owner.class);
                     if (o == null)
                     {
-                        ent.get(Health.class).addDamageInstance(new DamageInstance(10, 0));
+                        ent.get(Health.class).addDamageInstance(new DamageInstance(handled.get(Damage.class), 0));
                     }
                     else
                     {
-                        ent.get(Health.class).addDamageInstance(new DamageInstance(10, o.getId()));
+                        ent.get(Health.class).addDamageInstance(new DamageInstance(handled.get(Damage.class), o.getId()));
                     }
+                    handled.setState(EntityState.DESTROYED);
                 }
                 else if (ent.getType() == EntityType.WALL)
                 {
@@ -96,7 +110,10 @@ public class CollisionProcessor implements IEntityProcessor
             }
             case ENEMY:
             {
-                if (ent.getType() == EntityType.WALL)
+                // eg. getCollisionFlag returns INTANGIBLE = 2 (base 10) = 10 binary. CONCRETE = 1 (base 10) = 01 binary
+                // 10 and'ed with 01 = 00.
+                // CONCRETE and'ed with CONCRETE = 01 (!= 0)
+                if ((ent.get(CollisionData.class).getCollisionFlag() & CollisionFlags.CONCRETE) != 0)
                 {
                     calculateBounceResponse(handled, ent, entities);
                 }
@@ -115,6 +132,10 @@ public class CollisionProcessor implements IEntityProcessor
 
         for (Entity e3 : entities) // Checks if it collides with anything.
         {
+            if (e3.getState() == EntityState.DESTROYED)
+            {
+                continue;
+            }
             CollisionData e3Data = e3.get(CollisionData.class);
 
             if (e3.getID() == e1.getID() || e3.getID() == e2.getID() || e3Data == null)
@@ -125,6 +146,10 @@ public class CollisionProcessor implements IEntityProcessor
             {
                 for (Entity e4 : entities)
                 {
+                    if (e4.getState() == EntityState.DESTROYED)
+                    {
+                        continue;
+                    }
                     CollisionData e4Data = e4.get(CollisionData.class);
 
                     if (e4.getID() == e1.getID() || e4.getID() == e2.getID()
