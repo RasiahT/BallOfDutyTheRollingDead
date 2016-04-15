@@ -43,18 +43,23 @@ public class WeaponPlugin implements GamePluginSPI
         {
             if (e.getType() == PLAYER) // If player gets loaded after weapon, this is bad.
             {
-                Weapon wep = new Weapon();
-                wep.setAttackSpeed(0.4f);
-                wep.setAttackDamage(new Damage(10));
-                wep.setMaxAmmunition(300);
-                wep.setCurrentAmmunition(wep.getMaxAmmunition());
-                wep.setMaxMagazineSize(30);
-                wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
-                wep.setReloadSpeed(2);
-
-                e.add(wep);
+                addBaseWeapon(e);
             }
         }
+    }
+
+    public static void addBaseWeapon(Entity e)
+    {
+        Weapon wep = new Weapon();
+        wep.setAttackSpeed(0.4f);
+        wep.setAttackDamage(new Damage(10));
+        wep.setMaxAmmunition(300);
+        wep.setCurrentAmmunition(wep.getMaxAmmunition());
+        wep.setMaxMagazineSize(30);
+        wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
+        wep.setReloadSpeed(2);
+
+        e.add(wep);
     }
 
     @Override

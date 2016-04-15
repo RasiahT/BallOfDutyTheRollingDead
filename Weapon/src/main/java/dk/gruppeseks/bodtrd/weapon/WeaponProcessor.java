@@ -112,15 +112,7 @@ public class WeaponProcessor implements IEntityProcessor
     @Override
     public void notifyEntitiesAdded(Entity entity)
     {
-        Weapon wep = new Weapon();
-        wep.setAttackSpeed(0.4f);
-        wep.setMaxAmmunition(300);
-        wep.setCurrentAmmunition(wep.getMaxAmmunition());
-        wep.setMaxMagazineSize(30);
-        wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
-        wep.setReloadSpeed(2);
-
-        entity.add(wep);
+        WeaponPlugin.addBaseWeapon(entity);
     }
 
     @Override
