@@ -6,6 +6,7 @@
 package dk.gruppeseks.bodtrd.zombie;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.DamageInstance;
@@ -54,32 +55,36 @@ public class ZombieProcessor implements IEntityProcessor
         }
         Position playerCenter = new Position(playerPos.getX() + playerBod.getWidth() / 2, playerPos.getY() + playerBod.getHeight() / 2);
 
-        for (Entity zombie : _zombies.values())
+        for (Entity ent : world.entities())
         {
-            Position zombiePos = zombie.get(Position.class);
-            Body zombieBod = zombie.get(Body.class);
+            if (ent.getType() != EntityType.ENEMY)
+            {
+                continue;
+            }
+            Position zombiePos = ent.get(Position.class);
+            Body zombieBod = ent.get(Body.class);
             Position zombieCenter = new Position(zombiePos.getX() + zombieBod.getWidth() / 2, zombiePos.getY() + zombieBod.getHeight() / 2);
-            Velocity zombieVel = zombie.get(Velocity.class);
+            Velocity zombieVel = ent.get(Velocity.class);
             Vector2 velocity = new Vector2(zombieCenter, playerCenter);
-            Weapon zWeap = zombie.get(Weapon.class);
+            Weapon zWeap = ent.get(Weapon.class);
             zWeap.setAttackCooldown((float)(zWeap.getAttackCooldown() - world.getGameData().getDeltaTime()));
             if (velocity.getMagnitude() < DUMB_AI_RANGE)
             {
                 if (velocity.getMagnitude() <= ATTACK_RANGE + (zombieBod.getWidth() / 2) + (playerBod.getWidth() / 2))
                 {
-                    attackPlayer(world, zombie, player);
+                    attackPlayer(world, ent, player);
                 }
                 velocity.setMagnitude(MOVEMENT_SPEED);
             }
             else if (velocity.getMagnitude() < AGGRO_RANGE)
             {
-                Path path = zombie.get(Path.class);
+                Path path = ent.get(Path.class);
                 if (path == null || (currentTime - path.getCreationTime()) > TIME_BETWEEN_PATH_UPDATE)
                 {
                     try
                     {
                         Path newPath = _ai.getPath(zombieCenter, playerCenter, world);
-                        zombie.add(newPath);
+                        ent.add(newPath);
                         velocity = new Vector2(zombieCenter, newPath.peekPosition());
                     }
                     catch (NoPathException ex)
