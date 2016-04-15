@@ -36,6 +36,7 @@ public class WeaponProcessor implements IEntityProcessor
             {
                 continue;
             }
+            wep.setAttackCooldown((float)(wep.getAttackCooldown() - world.getGameData().getDeltaTime()));
             if (wep.getReloadTimeLeft() > 0)
             {
                 wep.setReloadTimeLeft((float)(wep.getReloadTimeLeft() - world.getGameData().getDeltaTime()));
@@ -43,7 +44,6 @@ public class WeaponProcessor implements IEntityProcessor
             }
 
             handleReloading(wep);
-
             if (!wep.isAttacking())
             {
                 continue;
@@ -57,8 +57,6 @@ public class WeaponProcessor implements IEntityProcessor
                 wep.setReloading(true);
                 continue;
             }
-
-            wep.setAttackCooldown((float)(wep.getAttackCooldown() - world.getGameData().getDeltaTime()));
 
             if (wep.getAttackCooldown() > 0)
             {
@@ -89,6 +87,7 @@ public class WeaponProcessor implements IEntityProcessor
         bullet.add(position);
         bullet.add(velocity);
         bullet.add(body);
+
         bullet.add(new Damage(wep.getAttackDamage().getDamage()));
         bullet.add(ViewManager.getView(WeaponPlugin.BULLET_IMAGE_FILE_PATH));
         bullet.add(new Owner(e.getID()));
@@ -127,6 +126,7 @@ public class WeaponProcessor implements IEntityProcessor
     @Override
     public void notifyEntitiesRemoved(Entity entity)
     {
+
     }
 
 }

@@ -128,12 +128,12 @@ public class Weapon
         this._isAttacking = isAttacking;
     }
 
-    public Damage getAttackDamage() 
+    public Damage getAttackDamage()
     {
         return _attackDamage;
     }
 
-    public void setAttackDamage(Damage attackDamage) 
+    public void setAttackDamage(Damage attackDamage)
     {
         this._attackDamage = attackDamage;
     }

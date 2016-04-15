@@ -13,6 +13,6 @@ public class CollisionFlags
 {
     public static final int NONE = 0;
     public static final int CONCRETE = 1;
-    public static final int INTANGIBLE = 2;
-    public static final int ELUSIVE = 4;
+    public static final int ELUSIVE = 2;
+    public static final int INTANGIBLE = 4;
 }
