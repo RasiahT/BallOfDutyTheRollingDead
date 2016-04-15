@@ -9,6 +9,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -212,8 +213,8 @@ public class Game implements ApplicationListener
 
         _camera.update();
         _batch.setProjectionMatrix(_camera.combined);
+        _shapeRenderer.setProjectionMatrix(_camera.combined);
         _batch.begin();
-
         if (background != null)
         {
             int backgroundWidth = background.getWidth();
@@ -224,11 +225,13 @@ public class Game implements ApplicationListener
             _batch.draw(background, 0, 0, backgroundWidth * backgroundRepeatWidth, backgroundHeight * backgroundRepeatHeight, 0, backgroundRepeatHeight, backgroundRepeatWidth, 0);
         }
 
+        _batch.end();
         for (Entity e : _world.entities())
         {
             View view = e.get(View.class);
             Body body = e.get(Body.class);
             Position pos = e.get(Position.class);
+            Health health = e.get(Health.class);
 
             if (body == null || pos == null || view == null)
             {
@@ -237,6 +240,7 @@ public class Game implements ApplicationListener
 
             if (_assetManager.isLoaded(view.getImageFilePath()))
             {
+                _batch.begin();
                 Texture texture = _assetManager.get(view.getImageFilePath(), Texture.class);
                 if (view.isRepeat())
                 {
@@ -248,20 +252,37 @@ public class Game implements ApplicationListener
                     int textureRepeatHeight = body.getHeight() / textureWidth;
 
                     _batch.draw(texture, (float)pos.getX(), (float)pos.getY(), textureWidth * textureRepeatWidth, textureHeight * textureRepeatHeight, 0, textureRepeatHeight, textureRepeatWidth, 0);
+
                 }
                 else
                 {
                     _batch.draw(texture, (float)pos.getX(), (float)pos.getY(), (float)body.getWidth(), (float)body.getHeight());
                 }
+                _batch.end();
+                if (health != null)
+                {
+                    _batch.begin();
+                    _shapeRenderer.begin(ShapeType.Filled);
+                    double centerX = pos.getX() + (body.getWidth() / 2);
+                    double upperY = pos.getY() + (body.getHeight());
+
+                    float healthPerc = (float)health.getHp() / (float)health.getMaxHp() * 100;
+
+                    _shapeRenderer.setColor(Color.RED);
+                    _shapeRenderer.rect((float)centerX - 25, (float)upperY + 10, 50, 10);
+                    _shapeRenderer.setColor(Color.GREEN);
+                    _shapeRenderer.rect((float)centerX - 25, (float)upperY + 10, healthPerc / 2, 10);
+
+                    _shapeRenderer.end();
+
+                    _batch.end();
+                }
             }
         }
-
-        //HUD
         if (p != null)
         {
-            drawFps(p);
+            drawHUD(p);
         }
-        _batch.end();
     }
 
     private void drawMouse()
@@ -273,14 +294,17 @@ public class Game implements ApplicationListener
         _shapeRenderer.end();
     }
 
-    private void drawFps(Entity p)
+    private void drawHUD(Entity p)
     {
+        _batch.begin();
         Position pPosition = p.get(Position.class);
         Health pHealth = p.get(Health.class);
         Weapon pWeapon = p.get(Weapon.class);
         _font.draw(_batch, "fps: " + Gdx.graphics.getFramesPerSecond(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 370)); // Need to create HUD
         _font.draw(_batch, "Hp: " + (int)pHealth.getHp() + "/" + (int)pHealth.getMaxHp(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 350));
+
         _font.draw(_batch, "Ammo: " + pWeapon.getCurrentMagazineSize() + "/" + pWeapon.getCurrentAmmunition(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 330));
+        _batch.end();
     }
 
     @Override
