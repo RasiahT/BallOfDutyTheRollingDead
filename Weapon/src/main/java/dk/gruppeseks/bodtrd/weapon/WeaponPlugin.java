@@ -5,6 +5,8 @@
  */
 package dk.gruppeseks.bodtrd.weapon;
 
+import dk.gruppeseks.bodtrd.common.data.AudioManager;
+import dk.gruppeseks.bodtrd.common.data.AudioType;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import static dk.gruppeseks.bodtrd.common.data.EntityType.PLAYER;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
@@ -23,6 +25,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class WeaponPlugin implements GamePluginSPI
 {
     public static final String BULLET_IMAGE_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/ballblack.png";
+    public static final String NINE_MM_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/9mm.mp3";
     private IEntityProcessor _processor;
     private World _world;
 
@@ -32,6 +35,7 @@ public class WeaponPlugin implements GamePluginSPI
         Installer.Plugin = this;
 
         ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
+        AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
 
         _world = world;
 

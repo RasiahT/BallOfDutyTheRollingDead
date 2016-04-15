@@ -5,6 +5,8 @@
  */
 package dk.gruppeseks.bodtrd.collision;
 
+import dk.gruppeseks.bodtrd.common.data.AudioManager;
+import dk.gruppeseks.bodtrd.common.data.AudioType;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.World;
@@ -19,6 +21,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class CollisionPlugin implements GamePluginSPI
 {
+    public static final String HITMARKER_SOUND_FILE_PATH = "../../../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/hitmarker.mp3";
     private IEntityProcessor _processor;
     private World _world;
 
@@ -27,6 +30,7 @@ public class CollisionPlugin implements GamePluginSPI
     {
         _world = world;
         Installer.Plugin = this;
+        AudioManager.createSound(HITMARKER_SOUND_FILE_PATH, AudioType.SOUND);
 
         _processor = new CollisionProcessor();
         world.addProcessor(5, _processor);

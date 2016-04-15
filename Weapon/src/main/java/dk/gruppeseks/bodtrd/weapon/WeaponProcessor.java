@@ -5,6 +5,8 @@
  */
 package dk.gruppeseks.bodtrd.weapon;
 
+import dk.gruppeseks.bodtrd.common.data.AudioAction;
+import dk.gruppeseks.bodtrd.common.data.AudioManager;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import static dk.gruppeseks.bodtrd.common.data.EntityType.PROJECTILE;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
@@ -95,6 +97,8 @@ public class WeaponProcessor implements IEntityProcessor
 
         wep.setCurrentMagazineSize(wep.getCurrentMagazineSize() - 1);
         wep.setAttackCooldown(wep.getAttackSpeed());
+        //adding audio to weapon
+        AudioManager.playSound(WeaponPlugin.NINE_MM_SOUND_FILE_PATH, AudioAction.PLAY);
     }
 
     private void handleReloading(Weapon wep)

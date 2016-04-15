@@ -8,6 +8,8 @@ package dk.gruppeseks.bodtrd.engine;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,6 +18,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import dk.gruppeseks.bodtrd.common.data.Audio;
+import dk.gruppeseks.bodtrd.common.data.AudioManager;
+import dk.gruppeseks.bodtrd.common.data.AudioType;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
@@ -27,6 +32,7 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import dk.gruppeseks.bodtrd.common.services.MapSPI;
+import dk.gruppeseks.bodtrd.managers.AudioPlayer;
 import dk.gruppeseks.bodtrd.managers.GameInputManager;
 import java.util.Collection;
 import java.util.Set;
@@ -48,6 +54,7 @@ public class Game implements ApplicationListener
     private SpriteBatch _batch;
     private ShapeRenderer _shapeRenderer;
     private AssetManager _assetManager;
+    private AudioPlayer _audioPlayer = new AudioPlayer();
     private Texture background;
     private BitmapFont _font;
     private MapSPI _map;
@@ -85,6 +92,8 @@ public class Game implements ApplicationListener
 
         loadViews();
         loadBackground();
+        loadAudio();
+        _assetManager.finishLoading();
     }
 
     private final LookupListener lookupListener = new LookupListener()
@@ -112,6 +121,8 @@ public class Game implements ApplicationListener
 
             loadViews();
             loadBackground();
+            loadAudio();
+            _assetManager.finishLoading();
         }
     };
 
@@ -142,7 +153,25 @@ public class Game implements ApplicationListener
                 _assetManager.load(imagePath, Texture.class);
             }
         }
-        _assetManager.finishLoading();
+    }
+
+    private void loadAudio()
+    {
+        for (Audio audio : AudioManager.audios())
+        {
+            String audioPath = audio.getFilePath();
+            Class c = Music.class;
+
+            if (audio.getType() == AudioType.SOUND)
+            {
+                c = Sound.class;
+            }
+
+            if (!_assetManager.isLoaded(audioPath, c))
+            {
+                _assetManager.load(audioPath, c);
+            }
+        }
     }
 
     private void loadBackground()
@@ -167,11 +196,12 @@ public class Game implements ApplicationListener
                 -Gdx.input.getY() + Gdx.graphics.getHeight() + (int)(_camera.position.y - _camera.viewportHeight / 2));
         _world.update();
         _assetManager.update();
+        _audioPlayer.handleAudioTasks(_assetManager);
     }
 
     private void draw()
     {
-        Entity p = _world.getGameData().getPlayer();       
+        Entity p = _world.getGameData().getPlayer();
         if (p != null)
         {
             Position pPosition = p.get(Position.class);
@@ -230,7 +260,7 @@ public class Game implements ApplicationListener
         if (p != null)
         {
             drawFps(p);
-       }
+        }
         _batch.end();
     }
 
@@ -249,7 +279,7 @@ public class Game implements ApplicationListener
         Health pHealth = p.get(Health.class);
         Weapon pWeapon = p.get(Weapon.class);
         _font.draw(_batch, "fps: " + Gdx.graphics.getFramesPerSecond(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 370)); // Need to create HUD
-        _font.draw(_batch, "Hp: " + (int) pHealth.getHp() + "/" + (int) pHealth.getMaxHp(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 350));
+        _font.draw(_batch, "Hp: " + (int)pHealth.getHp() + "/" + (int)pHealth.getMaxHp(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 350));
         _font.draw(_batch, "Ammo: " + pWeapon.getCurrentMagazineSize() + "/" + pWeapon.getCurrentAmmunition(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 330));
     }
 
@@ -262,11 +292,11 @@ public class Game implements ApplicationListener
     @Override
     public void resume()
     {
+
     }
 
     @Override
     public void dispose()
     {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

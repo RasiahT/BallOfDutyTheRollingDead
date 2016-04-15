@@ -5,6 +5,8 @@
  */
 package dk.gruppeseks.bodtrd.collision;
 
+import dk.gruppeseks.bodtrd.common.data.AudioAction;
+import dk.gruppeseks.bodtrd.common.data.AudioManager;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityState;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
@@ -101,6 +103,7 @@ public class CollisionProcessor implements IEntityProcessor
                         ent.get(Health.class).addDamageInstance(new DamageInstance(handled.get(Damage.class), o.getId()));
                     }
                     handled.setState(EntityState.DESTROYED);
+                    AudioManager.playSound(CollisionPlugin.HITMARKER_SOUND_FILE_PATH, AudioAction.PLAY);
                 }
                 else if (ent.getType() == EntityType.WALL)
                 {
