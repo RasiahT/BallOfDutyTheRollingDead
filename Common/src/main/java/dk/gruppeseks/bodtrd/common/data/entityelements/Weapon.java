@@ -11,7 +11,6 @@ package dk.gruppeseks.bodtrd.common.data.entityelements;
  */
 public class Weapon
 {
-
     private boolean _isAttacking;
     private int _maxAmmunition;
     private int _currentAmmunition;

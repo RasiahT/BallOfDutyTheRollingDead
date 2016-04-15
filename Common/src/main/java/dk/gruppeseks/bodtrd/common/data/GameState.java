@@ -11,5 +11,5 @@ package dk.gruppeseks.bodtrd.common.data;
  */
 public enum GameState
 {
-    PLAY, PAUSE_MENU, MAIN_MENU, SHOP_MENU
+    PLAY, PAUSE_MENU, MAIN_MENU, SHOP_MENU;
 }

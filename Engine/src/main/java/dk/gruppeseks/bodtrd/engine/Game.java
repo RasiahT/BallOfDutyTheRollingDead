@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import dk.gruppeseks.bodtrd.common.data.Audio;
+import dk.gruppeseks.bodtrd.common.data.AudioAction;
 import dk.gruppeseks.bodtrd.common.data.AudioManager;
 import dk.gruppeseks.bodtrd.common.data.AudioType;
 import dk.gruppeseks.bodtrd.common.data.Entity;
@@ -48,6 +49,7 @@ import org.openide.util.LookupListener;
  */
 public class Game implements ApplicationListener
 {
+    private static final String BACKGROUND_MUSIC_FILE_PATH = "../../../Engine/src/main/java/dk/gruppeseks/bodtrd/assets/ambientmusic.mp3";
     private OrthographicCamera _camera;
     private final Lookup _lookup = Lookup.getDefault();
     private World _world;
@@ -91,10 +93,14 @@ public class Game implements ApplicationListener
             plugin.start(_world);
         }
 
+        AudioManager.createSound(BACKGROUND_MUSIC_FILE_PATH, AudioType.MUSIC);
+
         loadViews();
         loadBackground();
         loadAudio();
         _assetManager.finishLoading();
+
+        AudioManager.playSound(BACKGROUND_MUSIC_FILE_PATH, AudioAction.LOOP);
     }
 
     private final LookupListener lookupListener = new LookupListener()

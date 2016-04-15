@@ -66,6 +66,10 @@ public class AudioPlayer
                 case PLAY:
                     music.play();
                     break;
+                case LOOP:
+                    music.play();
+                    music.setLooping(true);
+                    break;
                 case PAUSE:
                     music.pause();
                     break;

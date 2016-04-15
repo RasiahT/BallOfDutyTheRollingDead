@@ -19,8 +19,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class AudioManager
 {
     private static final Queue<AudioTask> _audioTasks = new ConcurrentLinkedQueue<>();
-    public final static String MUSIC_DIRECTORY = "../../../Common/src/main/resources/musics";
-    public final static String SOUND_DIRECTORY = "../../../Common/src/main/resources/sounds";
     private static java.util.Map<String, Audio> _sounds = new ConcurrentHashMap<>();
 
     public static boolean hasSoundTasks()

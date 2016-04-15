@@ -5,8 +5,6 @@
  */
 package dk.gruppeseks.bodtrd.common.data;
 
-import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
-import dk.gruppeseks.bodtrd.common.data.entityelements.Body.Geometry;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 
 /**
@@ -36,12 +34,12 @@ public class GameData
         _mousePosition.setY(y);
     }
 
-    public Entity getPlayer() 
+    public Entity getPlayer()
     {
         return _player;
     }
 
-    public void setPlayer(Entity player) 
+    public void setPlayer(Entity player)
     {
         this._player = player;
     }

@@ -11,7 +11,6 @@ package dk.gruppeseks.bodtrd.common.data;
  */
 public class AudioTask
 {
-
     private final String _audioFileName;
     private final AudioAction _audioAction;
     private float _duration;

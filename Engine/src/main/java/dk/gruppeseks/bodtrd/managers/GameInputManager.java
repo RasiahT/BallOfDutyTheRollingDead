@@ -85,6 +85,11 @@ public class GameInputManager extends InputAdapter
                 ActionHandler.setActive(Action.SHOOT, true);
                 break;
             }
+            case Keys.R:
+            {
+                ActionHandler.setActive(Action.RELOAD, true);
+                break;
+            }
         }
 
         return true;
@@ -127,6 +132,11 @@ public class GameInputManager extends InputAdapter
             case Keys.SPACE:
             {
                 ActionHandler.setActive(Action.SHOOT, false);
+                break;
+            }
+            case Keys.R:
+            {
+                ActionHandler.setActive(Action.RELOAD, false);
                 break;
             }
         }

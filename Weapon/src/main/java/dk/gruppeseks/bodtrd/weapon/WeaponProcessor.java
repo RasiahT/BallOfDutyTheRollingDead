@@ -107,7 +107,7 @@ public class WeaponProcessor implements IEntityProcessor
         {
             int currentAmmunition = wep.getCurrentAmmunition();
             int removedAmmunition = Math.min(currentAmmunition, wep.getMaxMagazineSize());
-            wep.setCurrentAmmunition(currentAmmunition - removedAmmunition);
+            wep.setCurrentAmmunition(currentAmmunition - removedAmmunition + wep.getCurrentMagazineSize());
             wep.setCurrentMagazineSize(removedAmmunition);
             wep.setReloading(false);
         }

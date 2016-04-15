@@ -11,5 +11,5 @@ package dk.gruppeseks.bodtrd.common.data;
  */
 public enum EntityState
 {
-    JUST_CREATED, ALIVE, DESTROYED
+    JUST_CREATED, ALIVE, DESTROYED;
 }

@@ -14,6 +14,5 @@ public enum EntityType
     PLAYER,
     WALL,
     PROJECTILE,
-    ENEMY
-
+    ENEMY;
 }
