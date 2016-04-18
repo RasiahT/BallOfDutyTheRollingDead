@@ -6,7 +6,6 @@
 package dk.gruppeseks.bodtrd.ai;
 
 import dk.gruppeseks.bodtrd.common.data.World;
-import dk.gruppeseks.bodtrd.common.data.entityelements.Path;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
@@ -24,7 +23,7 @@ public class AIProvider implements AISPI
     private boolean[][] _grid;
 
     @Override
-    public Path getPath(Position start, Position goal, World world) throws NoPathException
+    public Position[] getPath(Position start, Position goal, World world) throws NoPathException
     {
         _grid = world.getMap().getGrid();
         int cellSize = world.getMap().getGridCellSize();
@@ -51,8 +50,7 @@ public class AIProvider implements AISPI
             pathArray[outputIncrement++] = new Position(path.get(i).getCellX() * cellSize + cellSize / 2,
                     path.get(i).getCellY() * cellSize + cellSize / 2);
         }
-        Path output = new Path(pathArray);
-        return output;
+        return pathArray;
     }
 
     private Node removeBest(List<Node> fringe, int goalX, int goalY)

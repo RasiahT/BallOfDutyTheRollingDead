@@ -25,7 +25,9 @@ public class View
         return _imageFile;
     }
 
-    public boolean isRepeat() {
+    public boolean isRepeat()
+    {
         return _repeatImage;
     }
+
 }

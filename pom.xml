@@ -66,13 +66,11 @@
     </build>
 
     <modules>
-        <module>application</module>
         <module>Common</module>
         <module>Player</module>
         <module>Map</module>
         <module>Engine</module>
         <module>SilentUpdate</module>
-        <module>ModuleBuilder</module>
         <module>Weapon</module>
         <module>Movement</module>
         <module>Collision</module>
@@ -80,6 +78,8 @@
         <module>LifeState</module>
         <module>Zombie</module>
         <module>AI</module>
+        <module>ModuleBuilder</module>
+        <module>application</module>
     </modules>
 
     <properties>
