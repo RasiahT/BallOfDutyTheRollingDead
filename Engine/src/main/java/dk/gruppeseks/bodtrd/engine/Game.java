@@ -9,16 +9,23 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.graphics.g2d.PolygonSprite;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.EarClippingTriangulator;
+import com.badlogic.gdx.utils.ShortArray;
 import dk.gruppeseks.bodtrd.common.data.Audio;
 import dk.gruppeseks.bodtrd.common.data.AudioAction;
 import dk.gruppeseks.bodtrd.common.data.AudioManager;
@@ -27,6 +34,7 @@ import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
@@ -50,10 +58,12 @@ import org.openide.util.LookupListener;
 public class Game implements ApplicationListener
 {
     private static final String BACKGROUND_MUSIC_FILE_PATH = "../../../Engine/src/main/java/dk/gruppeseks/bodtrd/assets/ambientmusic.mp3";
-    private OrthographicCamera _camera;
+    private OrthographicCamera _gameCamera;
+    private OrthographicCamera _hudCamera;
     private final Lookup _lookup = Lookup.getDefault();
     private World _world;
-    private Set<GamePluginSPI> _gamePlugins;
+    private Set<GamePluginSPI> _gamePlugins = ConcurrentHashMap.newKeySet();
+    private Lookup.Result<GamePluginSPI> _result;
     private SpriteBatch _batch;
     private ShapeRenderer _shapeRenderer;
     private AssetManager _assetManager;
@@ -62,9 +72,21 @@ public class Game implements ApplicationListener
     private BitmapFont _font;
     private MapSPI _map;
 
+    private PolygonSpriteBatch _polyBatch;
+    private Texture _textureSolid;
+    private TextureRegion _textureRegion;
+    private Pixmap _pix;
+
     @Override
     public void create()
     {
+
+        _pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888); // Creates a pixel map with height and width of 1 pixel. RGBA8888 = 8 bit per color and alpha (32bit color system).
+        _pix.setColor(1, 0.3f, 0.1f, 0.3f);  // Red Green Blue Alpha. 1,1,1,1 would be white. 0,0,0,1 would be black.
+        _pix.fill();
+        _textureSolid = new Texture(_pix); // A texture of one pixel (With a specific color)
+        _textureRegion = new TextureRegion(_textureSolid); // A texture region keeps repeating a texture.
+        _polyBatch = new PolygonSpriteBatch();
         _font = new BitmapFont();
         _shapeRenderer = new ShapeRenderer();
         _batch = new SpriteBatch();
@@ -75,18 +97,19 @@ public class Game implements ApplicationListener
 
         gameData.setDisplayWidth(Gdx.graphics.getWidth());
         gameData.setDisplayHeight(Gdx.graphics.getHeight());
-        _camera = new OrthographicCamera(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+        _gameCamera = new OrthographicCamera(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+        _hudCamera = new OrthographicCamera(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+        _hudCamera.translate(gameData.getDisplayWidth() / 2, gameData.getDisplayHeight() / 2);
+        _hudCamera.update();
 
         _map = _lookup.lookup(MapSPI.class);
         _map.generateMap(_world);
 
         Gdx.input.setInputProcessor(new GameInputManager());
 
-        Lookup.Result<GamePluginSPI> result = _lookup.lookupResult(GamePluginSPI.class);
-        result.addLookupListener(lookupListener);
-        _gamePlugins = ConcurrentHashMap.newKeySet();
-        _gamePlugins.addAll(result.allInstances());
-        result.allItems();
+        _result = _lookup.lookupResult(GamePluginSPI.class);
+        _result.addLookupListener(lookupListener);
+        _gamePlugins.addAll(_result.allInstances());
 
         for (GamePluginSPI plugin : _gamePlugins)
         {
@@ -96,7 +119,6 @@ public class Game implements ApplicationListener
         AudioManager.createSound(BACKGROUND_MUSIC_FILE_PATH, AudioType.MUSIC);
 
         loadViews();
-        loadBackground();
         loadAudio();
         _assetManager.finishLoading();
 
@@ -108,7 +130,7 @@ public class Game implements ApplicationListener
         @Override
         public void resultChanged(LookupEvent le)
         {
-            Collection<GamePluginSPI> updatedPlugins = (Collection<GamePluginSPI>)_lookup.lookupAll(GamePluginSPI.class);
+            Collection<? extends GamePluginSPI> updatedPlugins = _result.allInstances();
             for (GamePluginSPI updatedPlugin : updatedPlugins)
             {
                 if (!_gamePlugins.contains(updatedPlugin))
@@ -127,9 +149,7 @@ public class Game implements ApplicationListener
             }
 
             loadViews();
-            loadBackground();
             loadAudio();
-            _assetManager.finishLoading();
         }
     };
 
@@ -181,8 +201,12 @@ public class Game implements ApplicationListener
         }
     }
 
-    private void loadBackground()
+    private void tryInitiliazeBackground()
     {
+        if (background != null)
+        {
+            return;
+        }
         View backgroundTextureView = _world.getMap().getMapTextureView();
         if (backgroundTextureView != null)
         {
@@ -199,8 +223,8 @@ public class Game implements ApplicationListener
 
     private void update()
     {
-        _world.getGameData().setMousePosition(Gdx.input.getX() + (int)(_camera.position.x - _camera.viewportWidth / 2),
-                -Gdx.input.getY() + Gdx.graphics.getHeight() + (int)(_camera.position.y - _camera.viewportHeight / 2));
+        _world.getGameData().setMousePosition(Gdx.input.getX() + (int)(_gameCamera.position.x - _gameCamera.viewportWidth / 2),
+                -Gdx.input.getY() + Gdx.graphics.getHeight() + (int)(_gameCamera.position.y - _gameCamera.viewportHeight / 2));
         _world.update();
         _assetManager.update();
         _audioPlayer.handleAudioTasks(_assetManager);
@@ -213,21 +237,22 @@ public class Game implements ApplicationListener
         {
             Position pPosition = p.get(Position.class);
             Body pBody = p.get(Body.class);
-            _camera.position.x = (float)(pPosition.getX() + pBody.getWidth() / 2);
-            _camera.position.y = (float)(pPosition.getY() + pBody.getHeight() / 2);
+            _gameCamera.position.x = (float)(pPosition.getX() + pBody.getWidth() / 2);
+            _gameCamera.position.y = (float)(pPosition.getY() + pBody.getHeight() / 2);
         }
 
-        _camera.update();
-        _batch.setProjectionMatrix(_camera.combined);
-        _shapeRenderer.setProjectionMatrix(_camera.combined);
+        _gameCamera.update();
+        _polyBatch.setProjectionMatrix(_gameCamera.combined);
+        _batch.setProjectionMatrix(_gameCamera.combined);
+        _shapeRenderer.setProjectionMatrix(_gameCamera.combined);
         _batch.begin();
+        tryInitiliazeBackground();
         if (background != null)
         {
             int backgroundWidth = background.getWidth();
             int backgroundHeight = background.getHeight();
             int backgroundRepeatWidth = _world.getMap().getWidth() / backgroundWidth;
             int backgroundRepeatHeight = _world.getMap().getHeight() / backgroundHeight;
-
             _batch.draw(background, 0, 0, backgroundWidth * backgroundRepeatWidth, backgroundHeight * backgroundRepeatHeight, 0, backgroundRepeatHeight, backgroundRepeatWidth, 0);
         }
 
@@ -243,7 +268,6 @@ public class Game implements ApplicationListener
             {
                 continue;
             }
-
             if (_assetManager.isLoaded(view.getImageFilePath()))
             {
                 _batch.begin();
@@ -284,6 +308,11 @@ public class Game implements ApplicationListener
                     _batch.end();
                 }
             }
+            AIData aiData = e.get(AIData.class);
+            if (aiData != null && aiData.getFoVShape() != null)
+            {
+//                drawFoV(aiData.getFoVShape());
+            }
         }
         if (p != null)
         {
@@ -291,9 +320,21 @@ public class Game implements ApplicationListener
         }
     }
 
+    private void drawFoV(float[] shape)
+    {
+        EarClippingTriangulator triangulator = new EarClippingTriangulator();
+        ShortArray triangleIndices = triangulator.computeTriangles(shape);
+        PolygonRegion polyReg = new PolygonRegion(_textureRegion, shape, triangleIndices.toArray());
+        PolygonSprite polySprite = new PolygonSprite(polyReg);
+
+        _polyBatch.begin();
+        polySprite.draw(_polyBatch);
+        _polyBatch.end();
+    }
+
     private void drawMouse()
     {
-        _shapeRenderer.setProjectionMatrix(_camera.combined);
+        _shapeRenderer.setProjectionMatrix(_gameCamera.combined);
         _shapeRenderer.begin(ShapeType.Filled);
         _shapeRenderer.setColor(1, 1, 0, 1);
         _shapeRenderer.circle((float)_world.getGameData().getMousePosition().getX(), (float)_world.getGameData().getMousePosition().getY(), 7);
@@ -302,15 +343,24 @@ public class Game implements ApplicationListener
 
     private void drawHUD(Entity p)
     {
+
+        _batch.setProjectionMatrix(_hudCamera.combined);
         _batch.begin();
-        Position pPosition = p.get(Position.class);
         Health pHealth = p.get(Health.class);
         Weapon pWeapon = p.get(Weapon.class);
-        _font.draw(_batch, "fps: " + Gdx.graphics.getFramesPerSecond(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 370)); // Need to create HUD
-        _font.draw(_batch, "Hp: " + (int)pHealth.getHp() + "/" + (int)pHealth.getMaxHp(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 350));
 
-        _font.draw(_batch, "Ammo: " + pWeapon.getCurrentMagazineSize() + "/" + pWeapon.getCurrentAmmunition(), (float)(pPosition.getX() - 600), (float)(pPosition.getY() + 330));
+        _font.draw(_batch, "fps: " + Gdx.graphics.getFramesPerSecond(), (float)(10), (float)(700)); // Need to create HUD
+        if (pHealth != null)
+        {
+            _font.draw(_batch, "Hp: " + (int)pHealth.getHp() + "/" + (int)pHealth.getMaxHp(), (float)(10), (float)(680));
+        }
+        if (pWeapon != null)
+        {
+            _font.draw(_batch, "Ammo: " + pWeapon.getCurrentMagazineSize() + "/" + pWeapon.getCurrentAmmunition(), (float)(10), (float)(660));
+
+        }
         _batch.end();
+        _batch.setProjectionMatrix(_gameCamera.combined);
     }
 
     @Override

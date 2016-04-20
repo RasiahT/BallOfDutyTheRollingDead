@@ -3,32 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dk.gruppeseks.bodtrd.common.data.entityelements;
+package dk.gruppeseks.bodtrd.common.data;
+
+import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 
 /**
  *
- * @author Frederik
+ * @author frede
  */
 public class Path
 {
+
     private Position[] _path;
     private int _nextPosition;
     private long _creationTime;
 
     public Path(Position[] path)
     {
-        _creationTime = System.currentTimeMillis();
         _path = path;
-    }
-
-    public long getCreationTime()
-    {
-        return _creationTime;
+        _creationTime = System.currentTimeMillis();
     }
 
     public Position[] getTotalPath()
     {
         return _path;
+    }
+
+    public long getCreationTime()
+    {
+        return _creationTime;
     }
 
     public Position peekPosition()

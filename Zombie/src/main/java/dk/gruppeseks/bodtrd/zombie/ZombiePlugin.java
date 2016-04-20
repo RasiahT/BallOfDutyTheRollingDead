@@ -10,6 +10,7 @@ import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Damage;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
@@ -52,7 +53,7 @@ public class ZombiePlugin implements GamePluginSPI
         _world = world;
         _zombies = new HashMap();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 5; i++)
         {
             Entity zombie = createZombieEntity();
             _zombies.put(zombie.getID(), zombie);
@@ -83,13 +84,14 @@ public class ZombiePlugin implements GamePluginSPI
         Entity entity = new Entity();
         entity.setType(EntityType.ENEMY);
         int diameter = (int)(BASE_DIAMETER + Math.random() * DIAMETER_VARIABLE);
-        entity.add(new Position(diameter * 2 + Math.random() * (_world.getMap().getWidth() - diameter * 2), diameter * 2 + Math.random() * (_world.getMap().getHeight() - diameter * 2)));
+        entity.add(new Position(diameter + Math.random() * (_world.getMap().getWidth() - diameter * 2), diameter + Math.random() * (_world.getMap().getHeight() - diameter * 2)));
         entity.add(new Body(diameter, diameter, Body.Geometry.CIRCLE));
         entity.add(new Velocity());
         entity.add(new Health(100, 0));
+        entity.add(new AIData());
         entity.add(ViewManager.getView(ZOMBIE_IMAGE_FILE_PATH));
         Weapon wep = new Weapon();
-        wep.setAttackSpeed(1.5f);
+        wep.setAttackSpeed(1f);
         wep.setAttackDamage(new Damage(3));
         entity.add(wep);
 

@@ -133,11 +133,11 @@ public class CollisionHandler
      */
     private static boolean collisionCircleCircle(CollisionDAO responding, CollisionDAO other)
     {
-        double dx = responding.x - other.x;
-        double dy = responding.y - other.y;
+
+        double dx = responding.centerX - other.centerX;
+        double dy = responding.centerY - other.centerY;
         double respondingRadius = responding.height / 2;
         double otherRadius = other.height / 2;
-
         return Math.sqrt((dx * dx) + (dy * dy)) <= (respondingRadius + otherRadius);
     }
 
@@ -285,9 +285,10 @@ public class CollisionHandler
     public static Position collisionResponseCircleCircle(CollisionDAO responding, CollisionDAO other)
     {
         // http://ericleong.me/research/circle-circle/ Need this link for bullet bounce or similar.
-        Vector2 distanceBetweenObjects = new Vector2(responding.x - other.x, responding.y - other.y);
+
+        Vector2 distanceBetweenObjects = new Vector2(responding.centerX - other.centerX, responding.centerY - other.centerY);
         distanceBetweenObjects.setMagnitude(responding.height / 2 + other.height / 2);
-        return new Position(other.x + distanceBetweenObjects.getX(), other.y + distanceBetweenObjects.getY());
+        return new Position(other.centerX + distanceBetweenObjects.getX() - responding.width / 2, other.centerY + distanceBetweenObjects.getY() - responding.height / 2);
     }
 
     /**
