@@ -8,6 +8,7 @@ package dk.gruppeseks.bodtrd.lifestate;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityState;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.LifeTime;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 
 /**
@@ -22,7 +23,7 @@ public class LifeStateProcessor implements IEntityProcessor
         for (Entity e : world.entities())
         {
             EntityState state = e.getState();
-            
+
             switch (state)
             {
                 case DESTROYED:
@@ -33,6 +34,19 @@ public class LifeStateProcessor implements IEntityProcessor
                     break;
                 default:
                     break;
+            }
+
+            LifeTime lifeTime = e.get(LifeTime.class);
+
+            if (lifeTime == null)
+            {
+                continue;
+            }
+
+            lifeTime.setLifeTime(lifeTime.getLifeTime() - world.getGameData().getDeltaTime());
+            if (lifeTime.getLifeTime() <= 0)
+            {
+                world.removeEntity(e);
             }
         }
     }

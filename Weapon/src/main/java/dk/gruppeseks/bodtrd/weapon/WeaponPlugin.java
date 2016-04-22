@@ -26,6 +26,8 @@ public class WeaponPlugin implements GamePluginSPI
 {
     public static final String BULLET_IMAGE_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/ballblack.png";
     public static final String NINE_MM_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/9mm.mp3";
+    public static final String RELOAD_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/reload.mp3";
+
     private IEntityProcessor _processor;
     private World _world;
 
@@ -36,6 +38,7 @@ public class WeaponPlugin implements GamePluginSPI
 
         ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
         AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
+        AudioManager.createSound(RELOAD_SOUND_FILE_PATH, AudioType.SOUND);
 
         _world = world;
 
@@ -62,6 +65,7 @@ public class WeaponPlugin implements GamePluginSPI
         wep.setMaxMagazineSize(30);
         wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
         wep.setReloadSpeed(2);
+        wep.setReloadSound(AudioManager.getAudio(RELOAD_SOUND_FILE_PATH));
 
         e.add(wep);
     }

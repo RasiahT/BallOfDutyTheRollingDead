@@ -5,6 +5,8 @@
  */
 package dk.gruppeseks.bodtrd.common.data;
 
+import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
+
 /**
  *
  * @author S
@@ -13,20 +15,29 @@ public class AudioTask
 {
     private final String _audioFileName;
     private final AudioAction _audioAction;
-    private float _duration;
+    private final float _duration;
     private final AudioType _audioType;
+    private final Position _position;
+    private final int _pulseRadius;
 
-    public AudioTask(String audioFileName, AudioAction audioAction, AudioType audioType)
-    {
-        this(audioFileName, audioAction, audioType, 0);
-    }
-
-    public AudioTask(String audioFileName, AudioAction audioAction, AudioType audioType, float duration)
+    public AudioTask(String audioFileName, AudioAction audioAction, AudioType audioType, float duration, Position position, int pulseRadius)
     {
         _audioFileName = audioFileName;
         _audioAction = audioAction;
         _audioType = audioType;
         _duration = duration;
+        _position = position;
+        _pulseRadius = pulseRadius;
+    }
+
+    public int getPulseRadius()
+    {
+        return _pulseRadius;
+    }
+
+    public Position getPosition()
+    {
+        return _position;
     }
 
     public String getFileName()

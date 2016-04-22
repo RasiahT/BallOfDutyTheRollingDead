@@ -5,6 +5,10 @@
  */
 package dk.gruppeseks.bodtrd.common.data.entityelements;
 
+import dk.gruppeseks.bodtrd.common.data.Audio;
+import dk.gruppeseks.bodtrd.common.data.AudioAction;
+import dk.gruppeseks.bodtrd.common.data.AudioManager;
+
 /**
  *
  * @author Dzenita Hasic
@@ -21,6 +25,7 @@ public class Weapon
     private boolean _isReloading;
     private float _attackCooldown;
     private Damage _attackDamage;
+    private Audio _reloadSound;
 
     public float getAttackCooldown()
     {
@@ -39,11 +44,17 @@ public class Weapon
 
     public void setReloading(boolean isReloading)
     {
-        this._isReloading = isReloading;
-        if (_isReloading)
+        if (_currentMagazineSize == _maxMagazineSize)
         {
-            setReloadTimeLeft(getReloadSpeed());
+            return;
         }
+        if (isReloading && !_isReloading)
+        {
+            System.out.println("reloading");
+            setReloadTimeLeft(getReloadSpeed());
+            AudioManager.playSound(_reloadSound.getOriginalFilePath(), AudioAction.PLAY);
+        }
+        this._isReloading = isReloading;
     }
 
     public float getAttackSpeed()
@@ -136,4 +147,15 @@ public class Weapon
     {
         this._attackDamage = attackDamage;
     }
+
+    public Audio getReloadSound()
+    {
+        return _reloadSound;
+    }
+
+    public void setReloadSound(Audio reloadSound)
+    {
+        this._reloadSound = reloadSound;
+    }
+
 }
