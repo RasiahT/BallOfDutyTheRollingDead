@@ -311,7 +311,7 @@ public class Game implements ApplicationListener
             AIData aiData = e.get(AIData.class);
             if (aiData != null && aiData.getFoVShape() != null)
             {
-//                drawFoV(aiData.getFoVShape());
+                drawFoV(aiData.getFoVShape());
             }
         }
         if (p != null)

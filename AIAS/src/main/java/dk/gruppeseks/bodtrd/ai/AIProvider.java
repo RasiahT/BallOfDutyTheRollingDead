@@ -5,12 +5,17 @@
  */
 package dk.gruppeseks.bodtrd.ai;
 
+import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.Path;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -22,17 +27,34 @@ public class AIProvider implements AISPI
 {
     private boolean[][] _grid;
 
+    private Map<Entity, Long> lastUpdate = new HashMap();
+    private Map<Entity, Path> zombiePath = new HashMap();
+    private final int TIME_BETWEEN_PATH_UPDATE = 300; // How many milliseconds between path update
+
     @Override
-    public Position[] getPath(Position start, Position goal, World world) throws NoPathException
+    public Path getPath(Entity entity, Entity target, World world) throws NoPathException
     {
+        Long lastUpdateLong = lastUpdate.get(entity);
+        if (lastUpdateLong != null && (System.currentTimeMillis() - lastUpdateLong) < TIME_BETWEEN_PATH_UPDATE)
+        {
+            return zombiePath.get(entity);
+        }
         _grid = world.getMap().getGrid();
         int cellSize = world.getMap().getGridCellSize();
 
-        int startX = (int)(start.getX() / cellSize);
-        int startY = (int)(start.getY() / cellSize);
+        Body zombieBod = entity.get(Body.class);
+        Position zombiePos = entity.get(Position.class);
+        Position zombieCenter = new Position(zombiePos.getX() + zombieBod.getWidth() / 2, zombiePos.getY() + zombieBod.getHeight() / 2);
 
-        int goalX = (int)(goal.getX() / cellSize);
-        int goalY = (int)(goal.getY() / cellSize);
+        int startX = (int)(zombieCenter.getX() / cellSize);
+        int startY = (int)(zombieCenter.getY() / cellSize);
+
+        Body targetBod = entity.get(Body.class);
+        Position targetPos = entity.get(Position.class);
+        Position targetCenter = new Position(targetPos.getX() + targetBod.getWidth() / 2, targetPos.getY() + targetBod.getHeight() / 2);
+
+        int goalX = (int)(targetCenter.getX() / cellSize);
+        int goalY = (int)(targetCenter.getY() / cellSize);
         if (startX >= _grid.length || goalX >= _grid.length || startY >= _grid[0].length || goalY >= _grid[0].length)
         {
             throw new NoPathException("Bad start or end point");
@@ -50,7 +72,10 @@ public class AIProvider implements AISPI
             pathArray[outputIncrement++] = new Position(path.get(i).getCellX() * cellSize + cellSize / 2,
                     path.get(i).getCellY() * cellSize + cellSize / 2);
         }
-        return pathArray;
+        Path output = new Path(pathArray);
+        lastUpdate.put(entity, System.currentTimeMillis());
+        zombiePath.put(entity, output);
+        return output;
     }
 
     private Node removeBest(List<Node> fringe, int goalX, int goalY)

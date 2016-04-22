@@ -31,9 +31,9 @@ public class AIData
         return _path;
     }
 
-    public void setPath(Position[] path)
+    public void setPath(Path path)
     {
-        _path = new Path(path);
+        _path = path;
     }
 
 }
