@@ -10,11 +10,13 @@ import dk.gruppeseks.bodtrd.common.data.AudioManager;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityState;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
+import dk.gruppeseks.bodtrd.common.data.ViewManager;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Damage;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.DamageInstance;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
+import dk.gruppeseks.bodtrd.common.data.entityelements.LifeTime;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Owner;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
@@ -67,13 +69,13 @@ public class CollisionProcessor implements IEntityProcessor
 
                 if (CollisionHandler.isColliding(handled, ent))
                 {
-                    handleCollision(handled, ent, entities);
+                    handleCollision(handled, ent, entities, world);
                 }
             }
         }
     }
 
-    private void handleCollision(Entity handled, Entity ent, Collection<Entity> entities)
+    private void handleCollision(Entity handled, Entity ent, Collection<Entity> entities, World world)
     {
         switch (handled.getType())
         {
@@ -103,6 +105,7 @@ public class CollisionProcessor implements IEntityProcessor
                         ent.get(Health.class).addDamageInstance(new DamageInstance(handled.get(Damage.class), o.getId()));
                     }
                     handled.setState(EntityState.DESTROYED);
+                    world.addEntity(createBlood(handled.get(Position.class)));
                     AudioManager.playSound(CollisionPlugin.HITMARKER_SOUND_FILE_PATH, AudioAction.PLAY);
                 }
                 else if (ent.getType() == EntityType.WALL)
@@ -178,6 +181,18 @@ public class CollisionProcessor implements IEntityProcessor
             }
             break;
         }
+    }
+
+    private Entity createBlood(Position pos)
+    {
+        Entity entity = new Entity();
+        entity.setType(EntityType.BLOOD);
+        entity.add(new Body(15, 15, Body.Geometry.RECTANGLE));
+        entity.add(new LifeTime(5));
+        entity.add(pos);
+        entity.add(ViewManager.getView(CollisionPlugin.BLOOD_IMAGE_FILE_PATH));
+
+        return entity;
     }
 
     @Override
