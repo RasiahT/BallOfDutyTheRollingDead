@@ -16,7 +16,7 @@ public class GameData
     private int _displayWidth;
     private int _displayHeight;
 
-    private double _deltaTime;
+    private float _deltaTime;
     private GameState _gameState;
 
     private Position _mousePosition = new Position(0, 0);
@@ -74,12 +74,12 @@ public class GameData
         this._gameState = gameState;
     }
 
-    public double getDeltaTime()
+    public float getDeltaTime()
     {
         return _deltaTime;
     }
 
-    public void setDeltaTime(double deltaTime)
+    public void setDeltaTime(float deltaTime)
     {
         this._deltaTime = deltaTime;
     }

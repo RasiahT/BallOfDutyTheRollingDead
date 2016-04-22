@@ -13,11 +13,13 @@ public class Audio
 {
     private final String _filePath;
     private final AudioType _audioType;
+    private final String _originalFilePath;
 
-    public Audio(String path, AudioType type)
+    public Audio(String originalPath, String path, AudioType type)
     {
         _filePath = path;
         _audioType = type;
+        _originalFilePath = originalPath;
     }
 
     public String getFilePath()
@@ -29,4 +31,10 @@ public class Audio
     {
         return _audioType;
     }
+
+    public String getOriginalFilePath()
+    {
+        return _originalFilePath;
+    }
+
 }
