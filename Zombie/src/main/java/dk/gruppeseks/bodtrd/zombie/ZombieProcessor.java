@@ -78,66 +78,53 @@ public class ZombieProcessor implements IEntityProcessor
             double distance = velocity.getMagnitude();
             Weapon zWeap = ent.get(Weapon.class);
             zWeap.setAttackCooldown((float)(zWeap.getAttackCooldown() - world.getGameData().getDeltaTime()));
-            if (distance >= AGGRO_RANGE)
+
+            velocity.setMagnitude(0);
+            AIData aiDat = ent.get(AIData.class);
+
+            try
             {
-                velocity.setMagnitude(0);
-                zombieBod.setOrientation(new Vector2(0, 1));
+                Path newPath = _ai.getPath(ent, player, world);
+                if (newPath.size() > 0)
+                {
+                    aiDat.setPath(newPath);
+                }
+
+            }
+            catch (NoPathException ex)
+            {
+                System.out.println("There is no path to the target");
             }
 
-            if (distance < AGGRO_RANGE)
+            Path path = aiDat.getPath();
+
+            if (path != null && path.size() > 0)
             {
-                velocity.setMagnitude(0);
-                AIData aiDat = ent.get(AIData.class);
-                Path path = aiDat.getPath();
-
-                try
+                Vector2 currentVector = new Vector2(zombieCenter, path.peekPosition());
+                if (currentVector.getMagnitude() < 10)
                 {
-                    Path newPath = _ai.getPath(ent, player, world);
-                    if (newPath.size() > 0)
+                    if (path.size() > 0)
                     {
-                        aiDat.setPath(newPath);
+                        path.popPosition();
                     }
-
-                    path = aiDat.getPath();
-
-                    if (path != null && path.size() > 0)
-                    {
-                        velocity = new Vector2(zombieCenter, path.peekPosition());
-                    }
-
                 }
-                catch (NoPathException ex)
+                if (path.size() > 0)
                 {
+                    velocity = new Vector2(zombieCenter, path.peekPosition());
                     velocity.setMagnitude(MOVEMENT_SPEED);
                 }
 
-                if (path != null && path.size() > 0)
-                {
-                    Vector2 currentVector = new Vector2(zombieCenter, path.peekPosition());
-                    if (currentVector.getMagnitude() < 10)
-                    {
-                        if (path.size() > 0)
-                        {
-                            path.popPosition();
-                        }
-
-                    }
-                    if (path.size() > 0)
-                    {
-                        velocity = new Vector2(zombieCenter, path.peekPosition());
-                        velocity.setMagnitude(MOVEMENT_SPEED);
-                    }
-
-                }
             }
-            if (distance <= AGGRO_RANGE)
+
+            if (velocity.getMagnitude() != 0)
             {
-                if (velocity.getMagnitude() != 0)
-                {
-                    zombieBod.setOrientation(velocity);
-                }
-
+                zombieBod.setOrientation(velocity);
             }
+            else
+            {
+                zombieBod.getOrientation().rotateDegrees(aiDat.getRotateSpeed());
+            }
+
             zombieVel.setVector(velocity);
         }
     }

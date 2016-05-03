@@ -38,6 +38,7 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
@@ -260,6 +261,7 @@ public class Game implements ApplicationListener
         for (Entity e : _world.entities())
         {
             View view = e.get(View.class);
+            Velocity vel = e.get(Velocity.class);
             Body body = e.get(Body.class);
             Position pos = e.get(Position.class);
             Health health = e.get(Health.class);
@@ -309,15 +311,32 @@ public class Game implements ApplicationListener
                 }
             }
             AIData aiData = e.get(AIData.class);
-            if (aiData != null && aiData.getFoVShape() != null)
+            if (aiData != null)
             {
-                drawFoV(aiData.getFoVShape());
+                if (aiData.getFoVShape() != null)
+                {
+                    drawFoV(aiData.getFoVShape());
+                }
+                if (aiData.getLatestKnownPosition() != null && vel.getVector().getMagnitude() > 0)
+                {
+                    drawLastKnown(aiData.getLatestKnownPosition());
+                }
+
             }
         }
         if (p != null)
         {
             drawHUD(p);
         }
+    }
+
+    private void drawLastKnown(Position lastKnown)
+    {
+        _shapeRenderer.setProjectionMatrix(_gameCamera.combined);
+        _shapeRenderer.begin(ShapeType.Filled);
+        _shapeRenderer.setColor(1, 1, 0, 1);
+        _shapeRenderer.circle((float)lastKnown.getX(), (float)lastKnown.getY(), 7);
+        _shapeRenderer.end();
     }
 
     private void drawFoV(float[] shape)

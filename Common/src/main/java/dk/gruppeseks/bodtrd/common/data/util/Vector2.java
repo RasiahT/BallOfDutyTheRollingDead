@@ -328,7 +328,7 @@ public class Vector2
 
     public double projectionOn(Vector2 axis)
     {
-        return scalarProduct(axis.normalize());
+        return scalarProduct(Vector2.normalize(axis));
     }
 
 }

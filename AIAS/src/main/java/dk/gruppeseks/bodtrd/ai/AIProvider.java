@@ -8,14 +8,13 @@ package dk.gruppeseks.bodtrd.ai;
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.Path;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -27,18 +26,21 @@ public class AIProvider implements AISPI
 {
     private boolean[][] _grid;
 
-    private Map<Entity, Long> lastUpdate = new HashMap();
-    private Map<Entity, Path> zombiePath = new HashMap();
-    private final int TIME_BETWEEN_PATH_UPDATE = 300; // How many milliseconds between path update
+    private final int TIME_BETWEEN_PATH_UPDATE = 200; // How many milliseconds between path update
 
     @Override
     public Path getPath(Entity entity, Entity target, World world) throws NoPathException
     {
-        Long lastUpdateLong = lastUpdate.get(entity);
-        if (lastUpdateLong != null && (System.currentTimeMillis() - lastUpdateLong) < TIME_BETWEEN_PATH_UPDATE)
+        AIData aiDat = entity.get(AIData.class);
+        if (aiDat != null)
         {
-            return zombiePath.get(entity);
+            long lastUpdateLong = entity.get(AIData.class).getUpdateTime();
+            if ((System.currentTimeMillis() - lastUpdateLong) < TIME_BETWEEN_PATH_UPDATE)
+            {
+                return aiDat.getPath();
+            }
         }
+
         _grid = world.getMap().getGrid();
         int cellSize = world.getMap().getGridCellSize();
 
@@ -49,8 +51,8 @@ public class AIProvider implements AISPI
         int startX = (int)(zombieCenter.getX() / cellSize);
         int startY = (int)(zombieCenter.getY() / cellSize);
 
-        Body targetBod = entity.get(Body.class);
-        Position targetPos = entity.get(Position.class);
+        Body targetBod = target.get(Body.class);
+        Position targetPos = target.get(Position.class);
         Position targetCenter = new Position(targetPos.getX() + targetBod.getWidth() / 2, targetPos.getY() + targetBod.getHeight() / 2);
 
         int goalX = (int)(targetCenter.getX() / cellSize);
@@ -73,8 +75,13 @@ public class AIProvider implements AISPI
                     path.get(i).getCellY() * cellSize + cellSize / 2);
         }
         Path output = new Path(pathArray);
-        lastUpdate.put(entity, System.currentTimeMillis());
-        zombiePath.put(entity, output);
+        if (aiDat == null)
+        {
+            aiDat = new AIData();
+            entity.add(aiDat);
+        }
+        aiDat.setPath(output);
+        aiDat.setUpdateTime(System.currentTimeMillis());
         return output;
     }
 

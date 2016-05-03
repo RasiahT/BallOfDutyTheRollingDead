@@ -17,6 +17,7 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.Health.Health;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
+import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
@@ -85,7 +86,9 @@ public class ZombiePlugin implements GamePluginSPI
         entity.setType(EntityType.ENEMY);
         int diameter = (int)(BASE_DIAMETER + Math.random() * DIAMETER_VARIABLE);
         entity.add(new Position(diameter + Math.random() * (_world.getMap().getWidth() - diameter * 2), diameter + Math.random() * (_world.getMap().getHeight() - diameter * 2)));
-        entity.add(new Body(diameter, diameter, Body.Geometry.CIRCLE));
+        Body body = new Body(diameter, diameter, Body.Geometry.CIRCLE);
+        body.setOrientation(new Vector2(0, 1));
+        entity.add(body);
         entity.add(new Velocity());
         entity.add(new Health(100, 0));
         entity.add(new AIData());
