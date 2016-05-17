@@ -19,7 +19,6 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
-import dk.gruppeseks.bodtrd.common.services.AISPI;
 import java.util.Map;
 
 /**
@@ -29,7 +28,6 @@ import java.util.Map;
 public class ZombieProcessor implements IEntityProcessor
 {
     private Map<Integer, Entity> _zombies;
-    private AISPI _ai;
     private World _world;
     private final int MOVEMENT_SPEED = 130;
     private final int AGGRO_RANGE = 500; // When it should start following a path towards the target.
@@ -39,10 +37,9 @@ public class ZombieProcessor implements IEntityProcessor
     private final int VISION_DISTANCE = 350;
     private final double VISION_DEGREES = 90;
 
-    public ZombieProcessor(Map<Integer, Entity> zombies, AISPI ai)
+    public ZombieProcessor(Map<Integer, Entity> zombies)
     {
         _zombies = zombies;
-        _ai = ai;
 
     }
 
@@ -64,30 +61,33 @@ public class ZombieProcessor implements IEntityProcessor
         }
         Position playerCenter = new Position(playerPos.getX() + playerBod.getWidth() / 2, playerPos.getY() + playerBod.getHeight() / 2);
 
-        for (Entity ent : world.entities())
+        for (Entity zombie : world.entities())
         {
-            if (ent.getType() != EntityType.ENEMY)
+            if (zombie.getType() != EntityType.ENEMY)
             {
                 continue;
             }
-            Position zombiePos = ent.get(Position.class);
-            Body zombieBod = ent.get(Body.class);
+            Position zombiePos = zombie.get(Position.class);
+            Body zombieBod = zombie.get(Body.class);
             Position zombieCenter = new Position(zombiePos.getX() + zombieBod.getWidth() / 2, zombiePos.getY() + zombieBod.getHeight() / 2);
-            Velocity zombieVel = ent.get(Velocity.class);
+            Velocity zombieVel = zombie.get(Velocity.class);
             Vector2 velocity = new Vector2(zombieCenter, playerCenter);
             double distance = velocity.getMagnitude();
-            Weapon zWeap = ent.get(Weapon.class);
-            zWeap.setAttackCooldown((float)(zWeap.getAttackCooldown() - world.getGameData().getDeltaTime()));
 
             velocity.setMagnitude(0);
-            AIData aiDat = ent.get(AIData.class);
+            AIData aiDat = zombie.get(AIData.class);
 
             try
             {
-                Path newPath = _ai.getPath(ent, player, world);
-                if (newPath.size() > 0)
+                Path newPath = null;
+                if (ZombiePlugin._ai != null)
                 {
-                    aiDat.setPath(newPath);
+                    newPath = ZombiePlugin._ai.getPath(zombie, player, world);
+
+                    if (newPath != null && newPath.size() > 0)
+                    {
+                        aiDat.setPath(newPath);
+                    }
                 }
 
             }
@@ -101,6 +101,7 @@ public class ZombieProcessor implements IEntityProcessor
             if (path != null && path.size() > 0)
             {
                 Vector2 currentVector = new Vector2(zombieCenter, path.peekPosition());
+
                 if (currentVector.getMagnitude() < 10)
                 {
                     if (path.size() > 0)
@@ -108,12 +109,18 @@ public class ZombieProcessor implements IEntityProcessor
                         path.popPosition();
                     }
                 }
+
                 if (path.size() > 0)
                 {
                     velocity = new Vector2(zombieCenter, path.peekPosition());
                     velocity.setMagnitude(MOVEMENT_SPEED);
                 }
 
+            }
+            Vector2 playerZombieVec = new Vector2(zombiePos, playerPos);
+            if (playerZombieVec.getMagnitude() - playerBod.getWidth() / 2 - zombieBod.getWidth() / 2 < ATTACK_RANGE)
+            {
+                attemptAttackTarget(zombie, player);
             }
 
             if (velocity.getMagnitude() != 0)
@@ -141,13 +148,13 @@ public class ZombieProcessor implements IEntityProcessor
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void attackPlayer(Entity zombie, Entity player)
+    private void attemptAttackTarget(Entity zombie, Entity target)
     {
         Weapon zWep = zombie.get(Weapon.class);
 
-        if (zWep.getAttackCooldown() <= 0)
+        if (zWep != null && zWep.getAttackCooldown() <= 0)
         {
-            player.get(Health.class).addDamageInstance(new DamageInstance(zWep.getAttackDamage(), zombie.getID()));
+            target.get(Health.class).addDamageInstance(new DamageInstance(zWep.getAttackDamage(), zombie.getID()));
             zWep.setAttackCooldown(zWep.getAttackSpeed());
         }
     }

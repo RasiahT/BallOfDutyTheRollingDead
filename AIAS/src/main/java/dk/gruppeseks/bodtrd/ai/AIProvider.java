@@ -25,12 +25,17 @@ import org.openide.util.lookup.ServiceProvider;
 public class AIProvider implements AISPI
 {
     private boolean[][] _grid;
-
+    public static World _world;
     private final int TIME_BETWEEN_PATH_UPDATE = 200; // How many milliseconds between path update
 
     @Override
     public Path getPath(Entity entity, Entity target, World world) throws NoPathException
     {
+        _world = world;
+        if (Installer.uninstalled)
+        {
+            return null;
+        }
         AIData aiDat = entity.get(AIData.class);
         if (aiDat != null)
         {

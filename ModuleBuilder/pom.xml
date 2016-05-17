@@ -95,6 +95,11 @@
             <artifactId>AIFoV</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>dk.gruppeseks.bodtrd</groupId>
+            <artifactId>AIAS</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     
     <profiles>

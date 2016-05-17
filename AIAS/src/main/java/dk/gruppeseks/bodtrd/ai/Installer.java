@@ -5,6 +5,8 @@
  */
 package dk.gruppeseks.bodtrd.ai;
 
+import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import org.openide.modules.ModuleInstall;
 
 /**
@@ -13,17 +15,32 @@ import org.openide.modules.ModuleInstall;
  */
 public class Installer extends ModuleInstall
 {
+    public static boolean uninstalled = false;
 
     @Override
     public void restored()
     {
-        // TODO
+        uninstalled = false;
     }
 
     @Override
     public void uninstalled()
     {
-
+        if (AIProvider._world != null)
+        {
+            for (Entity zombie : AIProvider._world.entities())
+            {
+                AIData dat = zombie.get(AIData.class);
+                if (dat != null)
+                {
+                    synchronized (dat)
+                    {
+                        uninstalled = true;
+                        dat.setPath(null);
+                        dat.setUpdateTime(0);
+                    }
+                }
+            }
+        }
     }
-
 }

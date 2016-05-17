@@ -65,6 +65,7 @@ public class Game implements ApplicationListener
     private World _world;
     private Set<GamePluginSPI> _gamePlugins = ConcurrentHashMap.newKeySet();
     private Lookup.Result<GamePluginSPI> _result;
+    private Lookup.Result<MapSPI> _mapResult;
     private SpriteBatch _batch;
     private ShapeRenderer _shapeRenderer;
     private AssetManager _assetManager;
@@ -103,6 +104,9 @@ public class Game implements ApplicationListener
         _hudCamera.translate(gameData.getDisplayWidth() / 2, gameData.getDisplayHeight() / 2);
         _hudCamera.update();
 
+        _mapResult = _lookup.lookupResult(MapSPI.class);
+        _mapResult.addLookupListener(mapLookupListener);
+
         _map = _lookup.lookup(MapSPI.class);
         _map.generateMap(_world);
 
@@ -110,6 +114,7 @@ public class Game implements ApplicationListener
 
         _result = _lookup.lookupResult(GamePluginSPI.class);
         _result.addLookupListener(lookupListener);
+
         _gamePlugins.addAll(_result.allInstances());
 
         for (GamePluginSPI plugin : _gamePlugins)
@@ -125,7 +130,20 @@ public class Game implements ApplicationListener
 
         AudioManager.playSound(BACKGROUND_MUSIC_FILE_PATH, AudioAction.LOOP);
     }
+    private final LookupListener mapLookupListener = new LookupListener()
+    {
+        @Override
+        public void resultChanged(LookupEvent le)
+        {
+            MapSPI newMap = _lookup.lookup(MapSPI.class);
 
+            if (newMap != null && _map != newMap)
+            {
+                _map = newMap;
+                _map.generateMap(_world);
+            }
+        }
+    };
     private final LookupListener lookupListener = new LookupListener()
     {
         @Override
@@ -334,8 +352,8 @@ public class Game implements ApplicationListener
     {
         _shapeRenderer.setProjectionMatrix(_gameCamera.combined);
         _shapeRenderer.begin(ShapeType.Filled);
-        _shapeRenderer.setColor(1, 1, 0, 1);
-        _shapeRenderer.circle((float)lastKnown.getX(), (float)lastKnown.getY(), 7);
+        _shapeRenderer.setColor(Color.CYAN);
+        _shapeRenderer.circle((float)lastKnown.getX(), (float)lastKnown.getY(), 10);
         _shapeRenderer.end();
     }
 
@@ -349,6 +367,13 @@ public class Game implements ApplicationListener
         _polyBatch.begin();
         polySprite.draw(_polyBatch);
         _polyBatch.end();
+
+        _shapeRenderer.setProjectionMatrix(_gameCamera.combined);
+        _shapeRenderer.begin(ShapeType.Line);
+        _shapeRenderer.setColor(Color.BROWN);
+        _shapeRenderer.polygon(shape);
+        _shapeRenderer.end();
+
     }
 
     private void drawMouse()

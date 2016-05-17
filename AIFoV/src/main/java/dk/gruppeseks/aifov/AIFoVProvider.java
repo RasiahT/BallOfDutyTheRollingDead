@@ -26,8 +26,8 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = AISPI.class)
 public class AIFoVProvider implements AISPI
 {
-    private World _world;
-    private static final int RAY_COUNT = 100;
+    public static World _world;
+    private static final int RAY_COUNT = 200;
     private static final int VISION_DISTANCE = 350;
     private static final double VISION_DEGREES = 110;
     private static final int DUMB_AI_RANGE = 80;
@@ -39,55 +39,63 @@ public class AIFoVProvider implements AISPI
     @Override
     public Path getPath(Entity entity, Entity target, World world) throws NoPathException
     {
-        List<Position> path = new ArrayList<>();
-        _world = world;
-        Position targetPos = target.get(Position.class);
-        Position entPos = entity.get(Position.class);
-        Body targetBod = target.get(Body.class);
-        Body entBod = entity.get(Body.class);
+        if (Installer.uninstalled)
+        {
+            return null;
+        }
         AIData dat = entity.get(AIData.class);
-
-        Position targetCenter = new Position(targetPos.getX() + targetBod.getWidth() / 2, targetPos.getY() + targetBod.getHeight() / 2);
-        Position entCenter = new Position(entPos.getX() + entBod.getWidth() / 2, entPos.getY() + entBod.getHeight() / 2);
-        Position raycastPos = rayCast(entity, targetCenter, entBod.getWidth() / 2);
-
-        Vector2 distance = new Vector2(targetCenter, entCenter);
-        if (distance.getMagnitude() < DUMB_AI_RANGE)
+        synchronized (dat)
         {
-            path.add(targetCenter);
-            dat.setLatestKnownPosition(null);
-        }
-        else if (raycastPos != null)
-        {
-            latestKnownPosition.put(entity.getID(), raycastPos);
-            path.add(raycastPos);
-            dat.setLatestKnownPosition(null);
+            List<Position> path = new ArrayList<>();
+            _world = world;
+            Position targetPos = target.get(Position.class);
+            Position entPos = entity.get(Position.class);
+            Body targetBod = target.get(Body.class);
+            Body entBod = entity.get(Body.class);
 
-        }
-        else
-        {
-            dat.setLatestKnownPosition(latestKnownPosition.get(entity.getID()));
-        }
-        long timeSince = 0;
-        if (lastRotateUpdate.get(entity.getID()) != null)
-        {
-            timeSince = System.currentTimeMillis() - lastRotateUpdate.get(entity.getID());
+            Position targetCenter = new Position(targetPos.getX() + targetBod.getWidth() / 2, targetPos.getY() + targetBod.getHeight() / 2);
+            Position entCenter = new Position(entPos.getX() + entBod.getWidth() / 2, entPos.getY() + entBod.getHeight() / 2);
+            Position raycastPos = rayCast(entity, targetCenter, entBod.getWidth() / 2);
 
+            Vector2 distance = new Vector2(targetCenter, entCenter);
+            if (distance.getMagnitude() < DUMB_AI_RANGE)
+            {
+                path.add(targetCenter);
+                dat.setLatestKnownPosition(null);
+            }
+            else if (raycastPos != null)
+            {
+                latestKnownPosition.put(entity.getID(), raycastPos);
+                path.add(raycastPos);
+                dat.setLatestKnownPosition(null);
+
+            }
+            else
+            {
+                dat.setLatestKnownPosition(latestKnownPosition.get(entity.getID()));
+            }
+            long timeSince = 0;
+            if (lastRotateUpdate.get(entity.getID()) != null)
+            {
+                timeSince = System.currentTimeMillis() - lastRotateUpdate.get(entity.getID());
+
+            }
+
+            if (lastRandom.get(entity.getID()) == null || timeSince > lastRandom.get(entity.getID()))
+            {
+                dat.setRotateSpeed(-ROTATE_MAX + Math.random() * ROTATE_MAX * 2);
+                lastRotateUpdate.put(entity.getID(), System.currentTimeMillis());
+                lastRandom.put(entity.getID(), (long)(Math.random() * 2000));
+            }
+            Position[] pathArray = new Position[path.size()];
+            for (int i = 0; i < path.size(); i++)
+            {
+                pathArray[i] = path.get(i);
+            }
+
+            return new Path(pathArray);
         }
 
-        if (lastRandom.get(entity.getID()) == null || timeSince > lastRandom.get(entity.getID()))
-        {
-            dat.setRotateSpeed(-ROTATE_MAX + Math.random() * ROTATE_MAX * 2);
-            lastRotateUpdate.put(entity.getID(), System.currentTimeMillis());
-            lastRandom.put(entity.getID(), (long)(Math.random() * 2000));
-        }
-        Position[] pathArray = new Position[path.size()];
-        for (int i = 0; i < path.size(); i++)
-        {
-            pathArray[i] = path.get(i);
-        }
-
-        return new Path(pathArray);
     }
 
     private Position rayCast(Entity zombie, Position targetCenter, int radius)
@@ -144,10 +152,10 @@ public class AIFoVProvider implements AISPI
         boolean[][] grid = _world.getMap().getGrid();
         int cellSize = _world.getMap().getGridCellSize();
 
-        for (int i = 0; i < ray.getMagnitude(); i += 2)
+        for (int i = 0; i < ray.getMagnitude() * 5 - 1; i++) // change to *1 / nothing, this is for demo purposes
         {
             Vector2 v = new Vector2(ray);
-            v.setMagnitude(i);
+            v.setMagnitude(i / 5);
             Position p = new Position(start, v);
 
             int x = (int)p.getX() / cellSize;
@@ -156,6 +164,7 @@ public class AIFoVProvider implements AISPI
             {
                 return p;
             }
+
         }
         return new Position(start, ray);    //No collision
     }

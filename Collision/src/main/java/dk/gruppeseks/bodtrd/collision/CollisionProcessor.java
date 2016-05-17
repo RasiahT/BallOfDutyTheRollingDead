@@ -166,7 +166,6 @@ public class CollisionProcessor implements IEntityProcessor
                     }
                     if (CollisionHandler.isColliding(handled, e4))
                     {
-                        System.out.println("Something lol");
                         handledPos.setX(firstPos.getX());
                         handledPos.setY(firstPos.getY()); // If it even collides after a third collision correction, then dont do any corrections at all.
                         break;
