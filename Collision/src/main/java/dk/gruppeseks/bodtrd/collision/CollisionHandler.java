@@ -133,7 +133,6 @@ public class CollisionHandler
      */
     private static boolean collisionCircleCircle(CollisionDAO responding, CollisionDAO other)
     {
-
         double dx = responding.centerX - other.centerX;
         double dy = responding.centerY - other.centerY;
         double respondingRadius = responding.height / 2;
@@ -154,7 +153,6 @@ public class CollisionHandler
     {
         double circleDistanceX = Math.abs(rect.centerX - circ.centerX);
         double circleDistanceY = Math.abs(rect.centerY - circ.centerY);
-
         if (circleDistanceY >= (rect.height / 2 + circ.height / 2))
         {
             return false;
@@ -171,10 +169,29 @@ public class CollisionHandler
         {
             return true;
         }
-        double cornerDistanceSq = Math.sqrt(
-                Math.pow((circleDistanceX - (circ.width / 2)), 2) + Math.pow((circleDistanceY - (circ.height / 2)), 2));
 
-        return (cornerDistanceSq < circ.height / 2);
+        double cornerX = rect.x;
+        double cornerY = rect.y;
+        if (circ.centerX > rect.x) // Means the circle center is on the right side of the square.
+        {
+            cornerX += rect.width; // We know the corner is on the right side.
+            if (circ.centerY > rect.y) // Means the circle center is below (Above in libgdx)
+            {
+                cornerY += rect.height;  // We know the corner is on the buttom.
+            }
+
+        }
+        else if (circ.centerX < rect.x) // Means the circle center is on the left side of the square.
+        {
+            if (circ.centerY > rect.y) // Means the circle center is below (Above in libgdx)
+            {
+                cornerY += rect.height; // We know the corner is on the buttom.
+            }
+        }
+
+        Vector2 cornerToCircCenter = new Vector2(new Position(cornerX, cornerY), new Position(circ.centerX, circ.centerY));
+
+        return (cornerToCircCenter.getMagnitude() < circ.height / 2);
     }
 
     /**
@@ -283,11 +300,13 @@ public class CollisionHandler
      */
     public static Position collisionResponseCircleCircle(CollisionDAO responding, CollisionDAO other)
     {
-        // http://ericleong.me/research/circle-circle/ Need this link for bullet bounce or similar.
+        Position centerResponding = new Position(responding.centerX, responding.centerY);
+        Position centerOther = new Position(other.centerX, other.centerY);
+        // Creates a vector from the respondings center to the others center.
+        Vector2 otherToResponding = new Vector2(centerOther, centerResponding);
+        otherToResponding.setMagnitude(responding.height / 2 + other.height / 2);
 
-        Vector2 distanceBetweenObjects = new Vector2(responding.centerX - other.centerX, responding.centerY - other.centerY);
-        distanceBetweenObjects.setMagnitude(responding.height / 2 + other.height / 2);
-        return new Position(other.centerX + distanceBetweenObjects.getX() - responding.width / 2, other.centerY + distanceBetweenObjects.getY() - responding.height / 2);
+        return new Position(other.centerX + otherToResponding.getX() - responding.width / 2, other.centerY + otherToResponding.getY() - responding.height / 2);
     }
 
     /**
