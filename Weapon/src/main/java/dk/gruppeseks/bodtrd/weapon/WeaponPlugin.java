@@ -24,9 +24,9 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class WeaponPlugin implements GamePluginSPI
 {
-    public static final String BULLET_IMAGE_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/ballblack.png";
-    public static final String NINE_MM_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/9mm.mp3";
-    public static final String RELOAD_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/reload.mp3";
+    public static final String BULLET_IMAGE_FILE_PATH = "../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/ballblack.png";
+    public static final String NINE_MM_SOUND_FILE_PATH = "../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/9mm.mp3";
+    public static final String RELOAD_SOUND_FILE_PATH = "../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/reload.mp3";
 
     private IEntityProcessor _processor;
     private World _world;

@@ -58,7 +58,7 @@ import org.openide.util.LookupListener;
  */
 public class Game implements ApplicationListener
 {
-    private static final String BACKGROUND_MUSIC_FILE_PATH = "../../../Engine/src/main/java/dk/gruppeseks/bodtrd/assets/ambientmusic.mp3";
+    private static final String BACKGROUND_MUSIC_FILE_PATH = "../Engine/src/main/java/dk/gruppeseks/bodtrd/assets/ambientmusic.mp3";
     private OrthographicCamera _gameCamera;
     private OrthographicCamera _hudCamera;
     private final Lookup _lookup = Lookup.getDefault();

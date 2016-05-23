@@ -22,7 +22,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class PlayerPlugin implements GamePluginSPI
 {
-    private static final String PLAYER_IMAGE_FILE_PATH = "../../../Player/src/main/java/dk/gruppeseks/bodtrd/player/assets/ball_red.png";
+    private static final String PLAYER_IMAGE_FILE_PATH = "../Player/src/main/java/dk/gruppeseks/bodtrd/player/assets/ball_red.png";
     private Entity _entity;
     private IEntityProcessor _processor;
     private GameData _gameData;

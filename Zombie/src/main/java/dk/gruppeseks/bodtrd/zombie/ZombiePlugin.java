@@ -35,7 +35,7 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class ZombiePlugin implements GamePluginSPI
 {
-    private static final String ZOMBIE_IMAGE_FILE_PATH = "../../../Zombie/src/main/java/dk/gruppeseks/bodtrd/zombie/assets/ball_zombie.png";
+    private static final String ZOMBIE_IMAGE_FILE_PATH = "../Zombie/src/main/java/dk/gruppeseks/bodtrd/zombie/assets/ball_zombie.png";
     private Map<Integer, Entity> _zombies;
     private IEntityProcessor _processor;
     private GameData _gameData;

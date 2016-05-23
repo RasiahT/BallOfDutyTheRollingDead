@@ -22,8 +22,8 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class CollisionPlugin implements GamePluginSPI
 {
-    public static final String HITMARKER_SOUND_FILE_PATH = "../../../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/hitmarker.mp3";
-    public static final String BLOOD_IMAGE_FILE_PATH = "../../../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/blood.png";
+    public static final String HITMARKER_SOUND_FILE_PATH = "../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/hitmarker.mp3";
+    public static final String BLOOD_IMAGE_FILE_PATH = "../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/blood.png";
 
     private IEntityProcessor _processor;
     private World _world;

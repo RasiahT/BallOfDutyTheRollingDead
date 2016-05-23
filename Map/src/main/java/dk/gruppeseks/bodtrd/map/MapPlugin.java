@@ -21,9 +21,9 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = MapSPI.class)
 public class MapPlugin implements MapSPI
 {
-    public final static String WALL_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/wall_box.png";
-    public final static String BORDER_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_border.png";
-    public final static String DIRT_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_dirt.png";
+    public final static String WALL_IMAGE_FILE_PATH = "../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/wall_box.png";
+    public final static String BORDER_IMAGE_FILE_PATH = "../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_border.png";
+    public final static String DIRT_IMAGE_FILE_PATH = "../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_dirt.png";
 
     private final static int MAP_WIDTH = 2000; // Be divisible by WALL_SIZE
     private final static int MAP_HEIGHT = 1000; // Be divisible by WALL_SIZE
