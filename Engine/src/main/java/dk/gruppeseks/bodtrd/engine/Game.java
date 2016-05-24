@@ -62,8 +62,8 @@ public class Game implements ApplicationListener
     private OrthographicCamera _gameCamera;
     private OrthographicCamera _hudCamera;
     private final Lookup _lookup = Lookup.getDefault();
-    private World _world;
-    private Set<GamePluginSPI> _gamePlugins = ConcurrentHashMap.newKeySet();
+    public World _world;
+    public Set<GamePluginSPI> _gamePlugins = ConcurrentHashMap.newKeySet(); // public so it can be tested
     private Lookup.Result<GamePluginSPI> _result;
     private Lookup.Result<MapSPI> _mapResult;
     private SpriteBatch _batch;
@@ -72,7 +72,7 @@ public class Game implements ApplicationListener
     private AudioPlayer _audioPlayer = new AudioPlayer();
     private Texture background;
     private BitmapFont _font;
-    private MapSPI _map;
+    public MapSPI _map; // Public so it can be tested.
 
     private PolygonSpriteBatch _polyBatch;
     private Texture _textureSolid;

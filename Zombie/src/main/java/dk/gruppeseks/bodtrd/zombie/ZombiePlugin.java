@@ -35,7 +35,8 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class ZombiePlugin implements GamePluginSPI
 {
-    private static final String ZOMBIE_IMAGE_FILE_PATH = "../../../Zombie/src/main/java/dk/gruppeseks/bodtrd/zombie/assets/ball_zombie.png";
+    private static final String ZOMBIE_IMAGE_PATH = "assets/ball_zombie.png";
+    private static String ZOMBIE_IMAGE_TOTAL_PATH = "";
     private Map<Integer, Entity> _zombies;
     private IEntityProcessor _processor;
     private GameData _gameData;
@@ -49,11 +50,12 @@ public class ZombiePlugin implements GamePluginSPI
     @Override
     public void start(World world)
     {
-
         Installer.Plugin = this;
 
-        ViewManager.createView(ZOMBIE_IMAGE_FILE_PATH, false);
+        ZOMBIE_IMAGE_TOTAL_PATH = ZombiePlugin.class.getResource(ZOMBIE_IMAGE_PATH).getPath();
+        ZOMBIE_IMAGE_TOTAL_PATH = ZOMBIE_IMAGE_TOTAL_PATH.replace("file:", "");
 
+        ViewManager.createView(ZOMBIE_IMAGE_TOTAL_PATH, false);
         _world = world;
         _zombies = new HashMap();
 
@@ -86,7 +88,7 @@ public class ZombiePlugin implements GamePluginSPI
     @Override
     public void stop()
     {
-        ViewManager.removeView(ZOMBIE_IMAGE_FILE_PATH);
+        ViewManager.removeView(ZOMBIE_IMAGE_PATH);
 
         _world.removeProcessor(_processor);
         for (Entity zombie : _zombies.values())
@@ -122,7 +124,7 @@ public class ZombiePlugin implements GamePluginSPI
         entity.add(new Velocity());
         entity.add(new Health(100, 0));
         entity.add(new AIData());
-        entity.add(ViewManager.getView(ZOMBIE_IMAGE_FILE_PATH));
+        entity.add(ViewManager.getView(ZOMBIE_IMAGE_TOTAL_PATH));
         Weapon wep = new Weapon();
         wep.setAttackSpeed(1f);
         wep.setAttackDamage(new Damage(3));

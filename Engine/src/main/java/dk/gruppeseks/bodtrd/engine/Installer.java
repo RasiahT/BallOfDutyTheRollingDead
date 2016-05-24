@@ -12,6 +12,8 @@ import org.openide.modules.ModuleInstall;
 public class Installer extends ModuleInstall
 {
 
+    public Game _game;
+
     @Override
     public void restored()
     {
@@ -23,7 +25,8 @@ public class Installer extends ModuleInstall
         cfg.resizable = false;
         cfg.vSyncEnabled = false;
 
-        new LwjglApplication(new Game(), cfg);
+        _game = new Game();
+        new LwjglApplication(_game, cfg);
     }
 
 }
