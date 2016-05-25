@@ -18,6 +18,7 @@ import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import static dk.gruppeseks.bodtrd.weapon.WeaponPlugin.BULLET_IMAGE_FILE_PATH;
 import static dk.gruppeseks.bodtrd.weapon.WeaponPlugin.NINE_MM_SOUND_FILE_PATH;
+import static dk.gruppeseks.bodtrd.weapon.WeaponPlugin.RELOAD_SOUND_FILE_PATH;
 import dk.gruppeseks.bodtrd.weapon.WeaponProcessor;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,7 +33,6 @@ import org.junit.Test;
  */
 public class WeaponProcessorTest
 {
-
     private World _world;
     private GameData _gameData;
     private IEntityProcessor _processor;
@@ -58,6 +58,32 @@ public class WeaponProcessorTest
         _processor = new WeaponProcessor();
         _gameData = new GameData();
         _gameData.setDeltaTime(0.03f);
+
+        ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
+        AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
+        AudioManager.createSound(RELOAD_SOUND_FILE_PATH, AudioType.SOUND);
+
+        _player = new Entity();
+        _player.setType(EntityType.PLAYER);
+
+        _world = new World(_gameData);
+        _world.addEntity(_player);
+
+        Weapon wep = new Weapon();
+        wep.setReloading(false);
+        wep.setAttackDamage(new Damage(20));
+        wep.setMaxMagazineSize(30);
+        wep.setMaxAmmunition(300);
+        wep.setCurrentMagazineSize(20);
+        wep.setAttackSpeed(20);
+        wep.setReloadTimeLeft(0);
+        wep.setAttackCooldown(0);
+        wep.setAttacking(true);
+        wep.setReloadSpeed(2);
+        wep.setCurrentAmmunition(wep.getMaxAmmunition());
+        wep.setReloadSound(AudioManager.getAudio(RELOAD_SOUND_FILE_PATH));
+
+        _player.add(wep);
     }
 
     @After
@@ -72,20 +98,11 @@ public class WeaponProcessorTest
     public void testPlayerShoot()
     {
         _gameData.setMousePosition(20, 20);
-        _world = new World(_gameData);
-        _player = new Entity();
 
         Position pos = new Position(300, 300);
         Body bod = new Body(50, 50, Body.Geometry.CIRCLE);
-
-        shoot(_player);
-
         _player.add(pos);
         _player.add(bod);
-        _player.setType(EntityType.PLAYER);
-        _world.addEntity(_player);
-        ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
-        AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
 
         _processor.process(_world);
 
@@ -109,24 +126,17 @@ public class WeaponProcessorTest
     {
         //Setup
         _gameData.setMousePosition(100, 100);
-        _world = new World(_gameData);
-        _player = new Entity();
         Position playerPos = new Position(50, 50);
         Body bod = new Body(50, 50, Body.Geometry.CIRCLE);
-
-        shoot(_player);
-
         _player.add(playerPos);
         _player.add(bod);
-        _player.setType(EntityType.PLAYER);
-        _world.addEntity(_player);
-        //Necessary to shoot
-        ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
-        AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
+
         //Calculate expected vector
         Position mousePos = _gameData.getMousePosition();
         Position playerCenter = new Position(playerPos.getX() + bod.getWidth() / 2, playerPos.getY() + bod.getHeight() / 2);
         Vector2 expectedVec = new Vector2(playerCenter, mousePos).normalize();
+
+        bod.setOrientation(new Vector2(mousePos.getX() - playerCenter.getX(), mousePos.getY() - playerCenter.getY()).setMagnitude(bod.getWidth() / 2));
 
         _processor.process(_world);
         Entity bullet = null;
@@ -144,24 +154,4 @@ public class WeaponProcessorTest
 
         assertTrue(expectedVec.equals(actualVec));
     }
-
-    /**
-     * Helper method to set weapon dummy data and add the weapon to an entity
-     *
-     * @param ent The entity to be given a dummy weapon
-     */
-    private void shoot(Entity ent)
-    {
-        Weapon wep = new Weapon();
-        wep.setReloading(false);
-        wep.setAttackDamage(new Damage(20));
-        wep.setCurrentMagazineSize(20);
-        wep.setAttackSpeed(20);
-        wep.setReloadTimeLeft(0);
-        wep.setAttackCooldown(0);
-        wep.setAttacking(true);
-
-        ent.add(wep);
-    }
-
 }

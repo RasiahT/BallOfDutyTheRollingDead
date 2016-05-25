@@ -82,8 +82,7 @@ public class MovementTest
         float actualX = (float)player.get(Position.class).getX();
         float actualY = (float)player.get(Position.class).getY();
 
-        // TODO proper checking of floating point values in order to avoid issues due to floating point precision.
-        assertTrue(expectedX == actualX && expectedY == actualY);
+        assertTrue((Math.abs(expectedX - actualX) < 0.00001f) && (Math.abs(expectedY - actualY) < 0.00001f));
     }
 
 }

@@ -8,7 +8,10 @@ import dk.gruppeseks.bodtrd.common.data.ActionHandler;
 import dk.gruppeseks.bodtrd.common.data.AudioManager;
 import dk.gruppeseks.bodtrd.common.data.AudioType;
 import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.GameData;
 import dk.gruppeseks.bodtrd.common.data.World;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
+import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
@@ -16,10 +19,10 @@ import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import dk.gruppeseks.bodtrd.player.PlayerProcessor;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -55,9 +58,11 @@ public class PlayerProcessorTest
         _player = new Entity();
         _velocity = new Velocity();
         _wep = new Weapon();
+        _player.add(new Position(0, 0));
+        _player.add(new Body(0, 0, Body.Geometry.CIRCLE));
         _player.add(_wep);
         _player.add(_velocity);
-        _world = new World(null);
+        _world = new World(new GameData());
 
         _processor = new PlayerProcessor(_player);
         //Necesssary to test weapon reload
@@ -79,7 +84,6 @@ public class PlayerProcessorTest
     @Test
     public void testMoveUp()
     {
-        _velocity = new Velocity();
         ActionHandler.setActive(Action.MOVE_DOWN, false);
         ActionHandler.setActive(Action.MOVE_LEFT, false);
         ActionHandler.setActive(Action.MOVE_RIGHT, false);
@@ -89,7 +93,6 @@ public class PlayerProcessorTest
         Vector2 expectedVec = new Vector2(0, 1);
         Vector2 actualVec = _player.get(Velocity.class).getVector().normalize();
 
-        // TODO proper checking of floating point values in order to avoid issues due to floating point precision.
         assertTrue(expectedVec.equals(actualVec));
     }
 
@@ -99,7 +102,6 @@ public class PlayerProcessorTest
     @Test
     public void testMoveDown()
     {
-        _velocity = new Velocity();
         ActionHandler.setActive(Action.MOVE_LEFT, false);
         ActionHandler.setActive(Action.MOVE_UP, false);
         ActionHandler.setActive(Action.MOVE_RIGHT, false);
@@ -109,7 +111,6 @@ public class PlayerProcessorTest
         Vector2 expectedVec = new Vector2(0, -1);
         Vector2 actualVec = _player.get(Velocity.class).getVector().normalize();
 
-        // TODO proper checking of floating point values in order to avoid issues due to floating point precision.
         assertTrue(expectedVec.equals(actualVec));
     }
 
@@ -119,7 +120,6 @@ public class PlayerProcessorTest
     @Test
     public void testMoveLeft()
     {
-        _velocity = new Velocity();
         ActionHandler.setActive(Action.MOVE_DOWN, false);
         ActionHandler.setActive(Action.MOVE_UP, false);
         ActionHandler.setActive(Action.MOVE_RIGHT, false);
@@ -129,7 +129,6 @@ public class PlayerProcessorTest
         Vector2 expectedVec = new Vector2(-1, 0);
         Vector2 actualVec = _player.get(Velocity.class).getVector().normalize();
 
-        // TODO proper checking of floating point values in order to avoid issues due to floating point precision.
         assertTrue(expectedVec.equals(actualVec));
     }
 
@@ -139,7 +138,6 @@ public class PlayerProcessorTest
     @Test
     public void testMoveRight()
     {
-        _velocity = new Velocity();
         ActionHandler.setActive(Action.MOVE_DOWN, false);
         ActionHandler.setActive(Action.MOVE_UP, false);
         ActionHandler.setActive(Action.MOVE_LEFT, false);
@@ -149,7 +147,6 @@ public class PlayerProcessorTest
         Vector2 expectedVec = new Vector2(1, 0);
         Vector2 actualVec = _player.get(Velocity.class).getVector().normalize();
 
-        // TODO proper checking of floating point values in order to avoid issues due to floating point precision.
         assertTrue(expectedVec.equals(actualVec));
     }
 
@@ -176,5 +173,4 @@ public class PlayerProcessorTest
 
         assertTrue(_wep.isReloading());
     }
-
 }

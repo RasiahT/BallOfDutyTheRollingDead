@@ -278,11 +278,11 @@ public class Vector2
             return false;
         }
         Vector2 other = (Vector2)obj;
-        if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+        if (!(Math.abs(x - other.x) < 0.00001f))
         {
             return false;
         }
-        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+        if (!(Math.abs(y - other.y) < 0.00001f))
         {
             return false;
         }

@@ -16,7 +16,7 @@ public class Body
     private int _height;
     private int _width;
     private Geometry _geometry;
-    private Vector2 _orientation;
+    private Vector2 _orientation = new Vector2(0, 0);
 
     public enum Geometry
     {
@@ -69,5 +69,4 @@ public class Body
     {
         this._orientation = new Vector2(_orientation);
     }
-
 }

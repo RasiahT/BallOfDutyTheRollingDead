@@ -6,6 +6,7 @@
 import dk.gruppeseks.bodtrd.common.data.Entity;
 import dk.gruppeseks.bodtrd.common.data.EntityType;
 import dk.gruppeseks.bodtrd.common.data.GameData;
+import dk.gruppeseks.bodtrd.common.data.Map;
 import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import dk.gruppeseks.bodtrd.player.PlayerPlugin;
@@ -48,6 +49,7 @@ public class PlayerPluginTest
         _gameData = new GameData();
         _plugin = new PlayerPlugin();
         _world = new World(_gameData);
+        _world.setMap(new Map(1, 1, 1, null));
     }
 
     @After
