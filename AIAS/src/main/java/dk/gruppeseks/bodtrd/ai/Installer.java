@@ -6,6 +6,7 @@
 package dk.gruppeseks.bodtrd.ai;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import org.openide.modules.ModuleInstall;
 
@@ -26,9 +27,10 @@ public class Installer extends ModuleInstall
     @Override
     public void uninstalled()
     {
-        if (AIProvider._world != null)
+        World world = AIProvider._world;
+        if (world != null)
         {
-            for (Entity zombie : AIProvider._world.entities())
+            for (Entity zombie : world.entities())
             {
                 AIData dat = zombie.get(AIData.class);
                 if (dat != null)

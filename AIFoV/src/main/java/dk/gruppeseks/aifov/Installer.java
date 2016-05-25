@@ -6,6 +6,7 @@
 package dk.gruppeseks.aifov;
 
 import dk.gruppeseks.bodtrd.common.data.Entity;
+import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import org.openide.modules.ModuleInstall;
 
@@ -22,9 +23,10 @@ public class Installer extends ModuleInstall
     @Override
     public void uninstalled()
     {
-        if (AIFoVProvider._world != null)
+        World world = AIFoVProvider._world;
+        if (world != null)
         {
-            for (Entity zombie : AIFoVProvider._world.entities())
+            for (Entity zombie : world.entities())
             {
                 AIData dat = zombie.get(AIData.class);
                 if (dat != null)
@@ -32,11 +34,10 @@ public class Installer extends ModuleInstall
                     synchronized (dat)
                     {
                         dat.setFoVShape(null);
-                        dat.setLatestKnownPosition(null);
+                        dat.setLastKnownPosition(null);
                         dat.setPath(null);
                         dat.setRotateSpeed(0);
                         uninstalled = true;
-                        System.out.println("removed " + zombie.getID());
                     }
                 }
             }

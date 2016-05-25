@@ -11,7 +11,6 @@ import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
-import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +23,11 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = AISPI.class)
 public class AIProvider implements AISPI
 {
-    private boolean[][] _grid;
     public static World _world;
     private final int TIME_BETWEEN_PATH_UPDATE = 200; // How many milliseconds between path update
 
     @Override
-    public Path getPath(Entity entity, Entity target, World world) throws NoPathException
+    public Path getPath(Entity entity, Entity target, World world)
     {
         _world = world;
         if (Installer.uninstalled)
@@ -46,7 +44,7 @@ public class AIProvider implements AISPI
             }
         }
 
-        _grid = world.getMap().getGrid();
+        boolean[][] grid = world.getMap().getGrid();
         int cellSize = world.getMap().getGridCellSize();
 
         Body zombieBod = entity.get(Body.class);
@@ -62,16 +60,21 @@ public class AIProvider implements AISPI
 
         int goalX = (int)(targetCenter.getX() / cellSize);
         int goalY = (int)(targetCenter.getY() / cellSize);
-        if (startX >= _grid.length || goalX >= _grid.length || startY >= _grid[0].length || goalY >= _grid[0].length)
+        if (startX >= grid.length || goalX >= grid.length || startY >= grid[0].length || goalY >= grid[0].length)
         {
-            throw new NoPathException("Bad start or end point");
+            return null;
         }
         if (startX < 0 || goalX < 0 || startY < 0 || goalY < 0)
         {
-            throw new NoPathException("Bad start or end point");
+            return null;
         }
 
-        List<Node> path = AStarSearch(startX, startY, goalX, goalY, new boolean[_grid.length][_grid[0].length]);
+        List<Node> path = AStarSearch(startX, startY, goalX, goalY, grid);
+        if (path == null)
+        {
+            return null;
+        }
+
         Position[] pathArray = new Position[path.size() - 1];
         int outputIncrement = 0;
         for (int i = path.size() - 2; i >= 0; i--)
@@ -110,8 +113,9 @@ public class AIProvider implements AISPI
     }
 
     // TODO move to its own file/class along with its submethods.
-    private List<Node> AStarSearch(int startX, int startY, int goalX, int goalY, boolean[][] explored) throws NoPathException
+    private List<Node> AStarSearch(int startX, int startY, int goalX, int goalY, boolean[][] grid)
     {
+        boolean[][] explored = new boolean[grid.length][grid[0].length];
         List<Node> fringe = new ArrayList();
         Node root = new Node(startX, startY, null, 0);
 
@@ -125,7 +129,7 @@ public class AIProvider implements AISPI
             {
                 return bestNode.getPath();
             }
-            List<Node> expansion = expand(bestNode, explored);
+            List<Node> expansion = expand(bestNode, explored, grid);
 
             for (Node n : expansion)
             {
@@ -133,10 +137,10 @@ public class AIProvider implements AISPI
                 fringe.add(n);
             }
         }
-        throw new NoPathException("No path towards the given point");
+        return null;
     }
 
-    private List<Node> expand(Node node, boolean[][] explored)
+    private List<Node> expand(Node node, boolean[][] explored, boolean[][] grid)
     {
         int x = node.getCellX();
         int y = node.getCellY();
@@ -155,19 +159,19 @@ public class AIProvider implements AISPI
 
         List<Node> expansion = new ArrayList();
 
-        if (downY >= 0 && _grid[downX][downY] && !explored[downX][downY])
+        if (downY >= 0 && grid[downX][downY] && !explored[downX][downY])
         {
             expansion.add(new Node(downX, downY, node, node.getDepth() + 1));
         }
-        if (upY < _grid[0].length && _grid[upX][upY] && !explored[upX][upY])
+        if (upY < grid[0].length && grid[upX][upY] && !explored[upX][upY])
         {
             expansion.add(new Node(upX, upY, node, node.getDepth() + 1));
         }
-        if (rightX < _grid.length && _grid[rightX][rightY] && !explored[rightX][rightY])
+        if (rightX < grid.length && grid[rightX][rightY] && !explored[rightX][rightY])
         {
             expansion.add(new Node(rightX, rightY, node, node.getDepth() + 1));
         }
-        if (leftX >= 0 && _grid[leftX][leftY] && !explored[leftX][leftY])
+        if (leftX >= 0 && grid[leftX][leftY] && !explored[leftX][leftY])
         {
             expansion.add(new Node(leftX, leftY, node, node.getDepth() + 1));
         }

@@ -335,9 +335,9 @@ public class Game implements ApplicationListener
                 {
                     drawFoV(aiData.getFoVShape());
                 }
-                if (aiData.getLatestKnownPosition() != null && vel.getVector().getMagnitude() > 0)
+                if (aiData.getLastKnownPosition() != null && vel.getVector().getMagnitude() > 0)
                 {
-                    drawLastKnown(aiData.getLatestKnownPosition());
+                    drawLastKnown(aiData.getLastKnownPosition());
                 }
 
             }

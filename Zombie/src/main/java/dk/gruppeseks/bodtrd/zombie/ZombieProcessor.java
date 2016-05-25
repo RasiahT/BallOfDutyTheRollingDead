@@ -17,7 +17,6 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Velocity;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
-import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
 import java.util.Map;
 
@@ -30,12 +29,7 @@ public class ZombieProcessor implements IEntityProcessor
     private Map<Integer, Entity> _zombies;
     private World _world;
     private final int MOVEMENT_SPEED = 130;
-    private final int AGGRO_RANGE = 500; // When it should start following a path towards the target.
-    private final int DUMB_AI_RANGE = 80; // When it shouldnt follow a path but just go directly to the target.
     private final int ATTACK_RANGE = 10; // When it should attack the target
-    private final int RAY_COUNT = 100;
-    private final int VISION_DISTANCE = 350;
-    private final double VISION_DEGREES = 90;
 
     public ZombieProcessor(Map<Integer, Entity> zombies)
     {
@@ -72,28 +66,19 @@ public class ZombieProcessor implements IEntityProcessor
             Position zombieCenter = new Position(zombiePos.getX() + zombieBod.getWidth() / 2, zombiePos.getY() + zombieBod.getHeight() / 2);
             Velocity zombieVel = zombie.get(Velocity.class);
             Vector2 velocity = new Vector2(zombieCenter, playerCenter);
-            double distance = velocity.getMagnitude();
 
             velocity.setMagnitude(0);
             AIData aiDat = zombie.get(AIData.class);
 
-            try
+            Path newPath = null;
+            if (ZombiePlugin._ai != null)
             {
-                Path newPath = null;
-                if (ZombiePlugin._ai != null)
+                newPath = ZombiePlugin._ai.getPath(zombie, player, world);
+
+                if (newPath != null && newPath.size() > 0)
                 {
-                    newPath = ZombiePlugin._ai.getPath(zombie, player, world);
-
-                    if (newPath != null && newPath.size() > 0)
-                    {
-                        aiDat.setPath(newPath);
-                    }
+                    aiDat.setPath(newPath);
                 }
-
-            }
-            catch (NoPathException ex)
-            {
-                System.out.println("There is no path to the target");
             }
 
             Path path = aiDat.getPath();

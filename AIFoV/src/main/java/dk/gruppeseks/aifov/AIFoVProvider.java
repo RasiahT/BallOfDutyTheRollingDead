@@ -12,7 +12,6 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
-import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +31,12 @@ public class AIFoVProvider implements AISPI
     private static final double VISION_DEGREES = 110;
     private static final int DUMB_AI_RANGE = 80;
     private static final double ROTATE_MAX = 1.3;
-    private java.util.Map<Integer, Position> latestKnownPosition = new ConcurrentHashMap();
-    private java.util.Map<Integer, Long> lastRotateUpdate = new ConcurrentHashMap();
-    private java.util.Map<Integer, Long> lastRandom = new ConcurrentHashMap();
+    private java.util.Map<Integer, Position> _lastKnownPosition = new ConcurrentHashMap();
+    private java.util.Map<Integer, Long> _lastRotateUpdate = new ConcurrentHashMap();
+    private java.util.Map<Integer, Long> _lastRandom = new ConcurrentHashMap();
 
     @Override
-    public Path getPath(Entity entity, Entity target, World world) throws NoPathException
+    public Path getPath(Entity entity, Entity target, World world)
     {
         if (Installer.uninstalled)
         {
@@ -61,31 +60,31 @@ public class AIFoVProvider implements AISPI
             if (distance.getMagnitude() < DUMB_AI_RANGE)
             {
                 path.add(targetCenter);
-                dat.setLatestKnownPosition(null);
+                dat.setLastKnownPosition(null);
             }
             else if (raycastPos != null)
             {
-                latestKnownPosition.put(entity.getID(), raycastPos);
+                _lastKnownPosition.put(entity.getID(), raycastPos);
                 path.add(raycastPos);
-                dat.setLatestKnownPosition(null);
+                dat.setLastKnownPosition(null);
 
             }
             else
             {
-                dat.setLatestKnownPosition(latestKnownPosition.get(entity.getID()));
+                dat.setLastKnownPosition(_lastKnownPosition.get(entity.getID()));
             }
             long timeSince = 0;
-            if (lastRotateUpdate.get(entity.getID()) != null)
+            if (_lastRotateUpdate.get(entity.getID()) != null)
             {
-                timeSince = System.currentTimeMillis() - lastRotateUpdate.get(entity.getID());
+                timeSince = System.currentTimeMillis() - _lastRotateUpdate.get(entity.getID());
 
             }
 
-            if (lastRandom.get(entity.getID()) == null || timeSince > lastRandom.get(entity.getID()))
+            if (_lastRandom.get(entity.getID()) == null || timeSince > _lastRandom.get(entity.getID()))
             {
                 dat.setRotateSpeed(-ROTATE_MAX + Math.random() * ROTATE_MAX * 2);
-                lastRotateUpdate.put(entity.getID(), System.currentTimeMillis());
-                lastRandom.put(entity.getID(), (long)(Math.random() * 2000));
+                _lastRotateUpdate.put(entity.getID(), System.currentTimeMillis());
+                _lastRandom.put(entity.getID(), (long)(Math.random() * 2000));
             }
             Position[] pathArray = new Position[path.size()];
             for (int i = 0; i < path.size(); i++)
@@ -95,7 +94,6 @@ public class AIFoVProvider implements AISPI
 
             return new Path(pathArray);
         }
-
     }
 
     private Position rayCast(Entity zombie, Position targetCenter, int radius)
@@ -144,7 +142,6 @@ public class AIFoVProvider implements AISPI
         AIData aiData = zombie.get(AIData.class);
         aiData.setFoVShape(floatShape);
         return retval;
-
     }
 
     private Position getFirstCollision(Vector2 ray, Position start)
@@ -190,7 +187,5 @@ public class AIFoVProvider implements AISPI
         }
 
         return null;
-
     }
-
 }

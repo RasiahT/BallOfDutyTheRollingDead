@@ -16,7 +16,7 @@ public class AIData
     private float[] _shape;
     private Path _path;
     private long _lastUpdate;
-    private Position _latestKnownPosition;
+    private Position _lastKnownPosition;
 
     private double _rotateSpeed;
 
@@ -44,9 +44,9 @@ public class AIData
      *
      * Latest known position of the target the AI is tracking.
      */
-    public Position getLatestKnownPosition()
+    public Position getLastKnownPosition()
     {
-        return this._latestKnownPosition;
+        return this._lastKnownPosition;
     }
 
     /**
@@ -54,9 +54,9 @@ public class AIData
      *
      * @param pos Latest known position of the target the AI is tracking.
      */
-    public void setLatestKnownPosition(Position pos)
+    public void setLastKnownPosition(Position pos)
     {
-        this._latestKnownPosition = pos;
+        this._lastKnownPosition = pos;
     }
 
     public void setUpdateTime(long time)
