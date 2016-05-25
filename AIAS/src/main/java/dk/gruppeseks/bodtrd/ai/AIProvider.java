@@ -11,6 +11,7 @@ import dk.gruppeseks.bodtrd.common.data.World;
 import dk.gruppeseks.bodtrd.common.data.entityelements.AIData;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Body;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
+import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.services.AISPI;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class AIProvider implements AISPI
 {
     public static World _world;
     private final int TIME_BETWEEN_PATH_UPDATE = 200; // How many milliseconds between path update
+    private static final int AGGRO_DISTANCE = 420;
 
     @Override
     public Path getPath(Entity entity, Entity target, World world)
@@ -58,12 +60,19 @@ public class AIProvider implements AISPI
         Position targetPos = target.get(Position.class);
         Position targetCenter = new Position(targetPos.getX() + targetBod.getWidth() / 2, targetPos.getY() + targetBod.getHeight() / 2);
 
+        Vector2 zombieToTarget = new Vector2(zombieCenter, targetCenter);
+
         int goalX = (int)(targetCenter.getX() / cellSize);
         int goalY = (int)(targetCenter.getY() / cellSize);
+        if (zombieToTarget.getMagnitude() > AGGRO_DISTANCE)
+        {
+            return null;
+        }
         if (startX >= grid.length || goalX >= grid.length || startY >= grid[0].length || goalY >= grid[0].length)
         {
             return null;
         }
+
         if (startX < 0 || goalX < 0 || startY < 0 || goalY < 0)
         {
             return null;
