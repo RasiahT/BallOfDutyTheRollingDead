@@ -58,29 +58,28 @@ public class EngineIntegrationTest
         Installer instance = new Installer();
 
         instance.restored(); // Starts a game that loads all plugins.
-
         try
         {
-            Thread.sleep(1000);
+            Thread.sleep(1000); // Waits for libgdx
         }
         catch (InterruptedException ex)
         {
             Exceptions.printStackTrace(ex);
         }
-
         World world = instance._game._world;
         Set<GamePluginSPI> gamePlugins = instance._game._gamePlugins;
         MapSPI map = instance._game._map;
         assertTrue(world.entities().size() > 0);
-        // It is expected that the depencies such as map has added something to the game.
+        // It is expected that the dependencies such as map has added something to the game.
         for (GamePluginSPI plugin : gamePlugins)
         {
             plugin.stop();
         }
         map.unloadMap();
-        assertTrue(world.entities().size() == 0);
+        assertTrue(world.entities().isEmpty());
 
         map.generateMap(world);
+        // It is expected that the dependencies such as map has added something to the game.
         assertTrue(world.entities().size() > 0);
         int size;
         int sizeBeforeStart;
@@ -97,7 +96,7 @@ public class EngineIntegrationTest
 
         }
         map.unloadMap();
-        assertTrue(world.entities().size() == 0);
+        assertTrue(world.entities().isEmpty());
     }
 
 }
