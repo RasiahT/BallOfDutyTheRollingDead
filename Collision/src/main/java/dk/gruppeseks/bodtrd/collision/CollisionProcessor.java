@@ -107,7 +107,7 @@ public class CollisionProcessor implements IEntityProcessor
                     }
                     handled.setState(EntityState.DESTROYED);
                     world.addEntity(createBlood(handled.get(Position.class)));
-                    AudioManager.playSound(CollisionPlugin.HITMARKER_SOUND_FILE_PATH, AudioAction.PLAY);
+                    AudioManager.playSound(CollisionPlugin.HITMARKER_SOUND_TOTAL_FILE_PATH, AudioAction.PLAY);
                 }
                 else if (ent.getType() == EntityType.WALL)
                 {
@@ -166,7 +166,7 @@ public class CollisionProcessor implements IEntityProcessor
         entity.add(new Body(15, 15, Body.Geometry.RECTANGLE));
         entity.add(new LifeTime(5));
         entity.add(pos);
-        entity.add(ViewManager.getView(CollisionPlugin.BLOOD_IMAGE_FILE_PATH));
+        entity.add(ViewManager.getView(CollisionPlugin.BLOOD_IMAGE_TOTAL_FILE_PATH));
 
         return entity;
     }

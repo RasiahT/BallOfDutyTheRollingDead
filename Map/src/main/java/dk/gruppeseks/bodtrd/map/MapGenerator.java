@@ -34,7 +34,7 @@ public class MapGenerator
 
     public static Map generateMap(List<Entity> walls, int mapWidth, int mapHeight)
     {
-        Map map = new Map(mapWidth, mapHeight, WALL_SIZE, ViewManager.getView(MapPlugin.DIRT_IMAGE_FILE_PATH));
+        Map map = new Map(mapWidth, mapHeight, WALL_SIZE, ViewManager.getView(MapPlugin.DIRT_IMAGE_TOTAL_FILE_PATH));
 
         int wallAmount = WALLS_PER_MEGA_PIXEL * mapHeight * mapWidth / MEGA_PIXEL;
         createBorderWalls(walls, mapWidth, mapHeight);
@@ -124,7 +124,7 @@ public class MapGenerator
         wall.setType(EntityType.WALL);
         wall.add(new Position(pos.getX(), pos.getY()));
         wall.add(new Body(WALL_SIZE, WALL_SIZE, Geometry.RECTANGLE));
-        wall.add(ViewManager.getView(MapPlugin.WALL_IMAGE_FILE_PATH));
+        wall.add(ViewManager.getView(MapPlugin.WALL_IMAGE_TOTAL_FILE_PATH));
 
         walls.add(wall);
         return true;
@@ -136,25 +136,25 @@ public class MapGenerator
         wallBot.setType(EntityType.WALL);
         wallBot.add(new Position(0, 0));
         wallBot.add(new Body(WALL_SIZE, mapWidth, Geometry.RECTANGLE));
-        wallBot.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_FILE_PATH));
+        wallBot.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_TOTAL_FILE_PATH));
 
         Entity wallTop = new Entity();
         wallTop.setType(EntityType.WALL);
         wallTop.add(new Position(0, mapHeight - WALL_SIZE));
         wallTop.add(new Body(WALL_SIZE, mapWidth, Geometry.RECTANGLE));
-        wallTop.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_FILE_PATH));
+        wallTop.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_TOTAL_FILE_PATH));
 
         Entity wallLeft = new Entity();
         wallLeft.setType(EntityType.WALL);
         wallLeft.add(new Position(0, WALL_SIZE));
         wallLeft.add(new Body(mapHeight - WALL_SIZE * 2, WALL_SIZE, Geometry.RECTANGLE));
-        wallLeft.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_FILE_PATH));
+        wallLeft.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_TOTAL_FILE_PATH));
 
         Entity wallRight = new Entity();
         wallRight.setType(EntityType.WALL);
         wallRight.add(new Position(mapWidth - WALL_SIZE, WALL_SIZE));
         wallRight.add(new Body(mapHeight - WALL_SIZE * 2, WALL_SIZE, Geometry.RECTANGLE));
-        wallRight.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_FILE_PATH));
+        wallRight.add(ViewManager.getView(MapPlugin.BORDER_IMAGE_TOTAL_FILE_PATH));
 
         walls.add(wallBot);
         walls.add(wallTop);

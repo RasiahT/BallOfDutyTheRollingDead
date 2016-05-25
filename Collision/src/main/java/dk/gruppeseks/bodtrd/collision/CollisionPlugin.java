@@ -22,9 +22,10 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class CollisionPlugin implements GamePluginSPI
 {
-    public static final String HITMARKER_SOUND_FILE_PATH = "../../../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/hitmarker.mp3";
-    public static final String BLOOD_IMAGE_FILE_PATH = "../../../Collision/src/main/java/dk/gruppeseks/bodtrd/collision/assets/blood.png";
-
+    private static final String HITMARKER_SOUND_FILE_PATH = "assets/hitmarker.mp3";
+    private static final String BLOOD_IMAGE_FILE_PATH = "assets/blood.png";
+    public static String HITMARKER_SOUND_TOTAL_FILE_PATH = "";
+    public static String BLOOD_IMAGE_TOTAL_FILE_PATH = "";
     private IEntityProcessor _processor;
     private World _world;
 
@@ -33,8 +34,10 @@ public class CollisionPlugin implements GamePluginSPI
     {
         _world = world;
         Installer.Plugin = this;
-        AudioManager.createSound(HITMARKER_SOUND_FILE_PATH, AudioType.SOUND);
-        ViewManager.createView(BLOOD_IMAGE_FILE_PATH, false);
+        HITMARKER_SOUND_TOTAL_FILE_PATH = CollisionPlugin.class.getResource(HITMARKER_SOUND_FILE_PATH).getPath().replace("file:", "");
+        BLOOD_IMAGE_TOTAL_FILE_PATH = CollisionPlugin.class.getResource(BLOOD_IMAGE_FILE_PATH).getPath().replace("file:", "");
+        AudioManager.createSound(HITMARKER_SOUND_TOTAL_FILE_PATH, AudioType.SOUND);
+        ViewManager.createView(BLOOD_IMAGE_TOTAL_FILE_PATH, false);
 
         _processor = new CollisionProcessor();
         world.addProcessor(5, _processor);

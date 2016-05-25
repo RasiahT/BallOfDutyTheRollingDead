@@ -24,10 +24,12 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class WeaponPlugin implements GamePluginSPI
 {
-    public static final String BULLET_IMAGE_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/ballblack.png";
-    public static final String NINE_MM_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/9mm.mp3";
-    public static final String RELOAD_SOUND_FILE_PATH = "../../../Weapon/src/main/java/dk/gruppeseks/bodtrd/weapon/assets/reload.mp3";
-
+    private static final String BULLET_IMAGE_FILE_PATH = "assets/ballblack.png";
+    private static final String NINE_MM_SOUND_FILE_PATH = "assets/9mm.mp3";
+    private static final String RELOAD_SOUND_FILE_PATH = "assets/reload.mp3";
+    public static String BULLET_IMAGE_TOTAL_FILE_PATH = "";
+    public static String NINE_MM_SOUND_TOTAL_FILE_PATH = "";
+    public static String RELOAD_SOUND_TOTAL_FILE_PATH = "";
     private IEntityProcessor _processor;
     private World _world;
 
@@ -36,9 +38,12 @@ public class WeaponPlugin implements GamePluginSPI
     {
         Installer.Plugin = this;
 
-        ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
-        AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
-        AudioManager.createSound(RELOAD_SOUND_FILE_PATH, AudioType.SOUND);
+        BULLET_IMAGE_TOTAL_FILE_PATH = WeaponPlugin.class.getResource(BULLET_IMAGE_FILE_PATH).getPath().replace("file:", "");
+        NINE_MM_SOUND_TOTAL_FILE_PATH = WeaponPlugin.class.getResource(NINE_MM_SOUND_FILE_PATH).getPath().replace("file:", "");
+        RELOAD_SOUND_TOTAL_FILE_PATH = WeaponPlugin.class.getResource(RELOAD_SOUND_FILE_PATH).getPath().replace("file:", "");
+        ViewManager.createView(BULLET_IMAGE_TOTAL_FILE_PATH, false);
+        AudioManager.createSound(NINE_MM_SOUND_TOTAL_FILE_PATH, AudioType.SOUND);
+        AudioManager.createSound(RELOAD_SOUND_TOTAL_FILE_PATH, AudioType.SOUND);
 
         _world = world;
 
@@ -65,7 +70,7 @@ public class WeaponPlugin implements GamePluginSPI
         wep.setMaxMagazineSize(30);
         wep.setCurrentMagazineSize(wep.getMaxMagazineSize());
         wep.setReloadSpeed(2);
-        wep.setReloadSound(AudioManager.getAudio(RELOAD_SOUND_FILE_PATH));
+        wep.setReloadSound(AudioManager.getAudio(RELOAD_SOUND_TOTAL_FILE_PATH));
 
         e.add(wep);
     }
@@ -73,7 +78,7 @@ public class WeaponPlugin implements GamePluginSPI
     @Override
     public void stop()
     {
-        ViewManager.removeView(BULLET_IMAGE_FILE_PATH);
+        ViewManager.removeView(BULLET_IMAGE_TOTAL_FILE_PATH);
 
         _world.removeProcessor(_processor);
         _world.removeEnthusiast(PLAYER, _processor);

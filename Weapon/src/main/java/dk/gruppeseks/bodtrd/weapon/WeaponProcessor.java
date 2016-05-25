@@ -90,14 +90,14 @@ public class WeaponProcessor implements IEntityProcessor
         bullet.add(body);
 
         bullet.add(new Damage(wep.getAttackDamage().getDamage()));
-        bullet.add(ViewManager.getView(WeaponPlugin.BULLET_IMAGE_FILE_PATH));
+        bullet.add(ViewManager.getView(WeaponPlugin.BULLET_IMAGE_TOTAL_FILE_PATH));
         bullet.add(new Owner(e.getID()));
         world.addEntity(bullet);
 
         wep.setCurrentMagazineSize(wep.getCurrentMagazineSize() - 1);
         wep.setAttackCooldown(wep.getAttackSpeed());
         //adding audio to weapon
-        AudioManager.playSound(WeaponPlugin.NINE_MM_SOUND_FILE_PATH, AudioAction.PLAY);
+        AudioManager.playSound(WeaponPlugin.NINE_MM_SOUND_TOTAL_FILE_PATH, AudioAction.PLAY);
     }
 
     private void handleReloading(Weapon wep)

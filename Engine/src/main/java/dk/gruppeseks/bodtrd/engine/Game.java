@@ -43,6 +43,7 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.View;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.services.GamePluginSPI;
 import dk.gruppeseks.bodtrd.common.services.MapSPI;
+import dk.gruppeseks.bodtrd.managers.AssetsJarFileResolver;
 import dk.gruppeseks.bodtrd.managers.AudioPlayer;
 import dk.gruppeseks.bodtrd.managers.GameInputManager;
 import java.util.Collection;
@@ -58,7 +59,8 @@ import org.openide.util.LookupListener;
  */
 public class Game implements ApplicationListener
 {
-    private static final String BACKGROUND_MUSIC_FILE_PATH = "../../../Engine/src/main/java/dk/gruppeseks/bodtrd/assets/ambientmusic.mp3";
+    private static final String BACKGROUND_MUSIC_FILE_PATH = "assets/ambientmusic.mp3";
+    private static String BACKGROUND_MUSIC_TOTAL_FILE_PATH = "";
     private OrthographicCamera _gameCamera;
     private OrthographicCamera _hudCamera;
     private final Lookup _lookup = Lookup.getDefault();
@@ -92,7 +94,8 @@ public class Game implements ApplicationListener
         _font = new BitmapFont();
         _shapeRenderer = new ShapeRenderer();
         _batch = new SpriteBatch();
-        _assetManager = new AssetManager();
+        AssetsJarFileResolver jfhr = new AssetsJarFileResolver();
+        _assetManager = new AssetManager(jfhr);
 
         GameData gameData = new GameData();
         _world = new World(gameData);
@@ -121,14 +124,14 @@ public class Game implements ApplicationListener
         {
             plugin.start(_world);
         }
+        BACKGROUND_MUSIC_TOTAL_FILE_PATH = Game.class.getResource(BACKGROUND_MUSIC_FILE_PATH).getPath().replace("file:", "");
 
-        AudioManager.createSound(BACKGROUND_MUSIC_FILE_PATH, AudioType.MUSIC);
-
+        AudioManager.createSound(BACKGROUND_MUSIC_TOTAL_FILE_PATH, AudioType.MUSIC);
         loadViews();
         loadAudio();
         _assetManager.finishLoading();
 
-        AudioManager.playSound(BACKGROUND_MUSIC_FILE_PATH, AudioAction.LOOP);
+        AudioManager.playSound(BACKGROUND_MUSIC_TOTAL_FILE_PATH, AudioAction.LOOP);
     }
     private final LookupListener mapLookupListener = new LookupListener()
     {
@@ -194,6 +197,7 @@ public class Game implements ApplicationListener
         for (View view : ViewManager.views())
         {
             String imagePath = view.getImageFilePath();
+
             if (!_assetManager.isLoaded(imagePath, Texture.class))
             {
                 _assetManager.load(imagePath, Texture.class);

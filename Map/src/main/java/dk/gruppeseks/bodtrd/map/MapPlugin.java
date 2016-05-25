@@ -21,9 +21,12 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = MapSPI.class)
 public class MapPlugin implements MapSPI
 {
-    public final static String WALL_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/wall_box.png";
-    public final static String BORDER_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_border.png";
-    public final static String DIRT_IMAGE_FILE_PATH = "../../../Map/src/main/java/dk/gruppeseks/bodtrd/map/assets/texture_dirt.png";
+    private final static String WALL_IMAGE_FILE_PATH = "assets/wall_box.png";
+    private final static String BORDER_IMAGE_FILE_PATH = "assets/texture_border.png";
+    private final static String DIRT_IMAGE_FILE_PATH = "assets/texture_dirt.png";
+    public static String WALL_IMAGE_TOTAL_FILE_PATH = "assets/wall_box.png";
+    public static String BORDER_IMAGE_TOTAL_FILE_PATH = "assets/texture_border.png";
+    public static String DIRT_IMAGE_TOTAL_FILE_PATH = "assets/texture_dirt.png";
 
     private final static int MAP_WIDTH = 2000; // Be divisible by WALL_SIZE
     private final static int MAP_HEIGHT = 1000; // Be divisible by WALL_SIZE
@@ -34,9 +37,9 @@ public class MapPlugin implements MapSPI
     @Override
     public void unloadMap()
     {
-        ViewManager.removeView(WALL_IMAGE_FILE_PATH);
-        ViewManager.removeView(BORDER_IMAGE_FILE_PATH);
-        ViewManager.removeView(DIRT_IMAGE_FILE_PATH);
+        ViewManager.removeView(WALL_IMAGE_TOTAL_FILE_PATH);
+        ViewManager.removeView(BORDER_IMAGE_TOTAL_FILE_PATH);
+        ViewManager.removeView(DIRT_IMAGE_TOTAL_FILE_PATH);
 
         for (Entity wall : _walls)
         {
@@ -51,9 +54,12 @@ public class MapPlugin implements MapSPI
 
         Installer.Plugin = this;
 
-        ViewManager.createView(WALL_IMAGE_FILE_PATH, false);
-        ViewManager.createView(BORDER_IMAGE_FILE_PATH, true);
-        ViewManager.createView(DIRT_IMAGE_FILE_PATH, true);
+        WALL_IMAGE_TOTAL_FILE_PATH = MapPlugin.class.getResource(WALL_IMAGE_FILE_PATH).getPath().replace("file:", "");
+        BORDER_IMAGE_TOTAL_FILE_PATH = MapPlugin.class.getResource(BORDER_IMAGE_FILE_PATH).getPath().replace("file:", "");
+        DIRT_IMAGE_TOTAL_FILE_PATH = MapPlugin.class.getResource(DIRT_IMAGE_FILE_PATH).getPath().replace("file:", "");
+        ViewManager.createView(WALL_IMAGE_TOTAL_FILE_PATH, false);
+        ViewManager.createView(BORDER_IMAGE_TOTAL_FILE_PATH, true);
+        ViewManager.createView(DIRT_IMAGE_TOTAL_FILE_PATH, true);
 
         Map map = MapGenerator.generateMap(_walls, MAP_WIDTH, MAP_HEIGHT);
         for (Entity wall : _walls)

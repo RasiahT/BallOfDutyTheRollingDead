@@ -22,7 +22,8 @@ import org.openide.util.lookup.ServiceProvider;
 @ServiceProvider(service = GamePluginSPI.class)
 public class PlayerPlugin implements GamePluginSPI
 {
-    private static final String PLAYER_IMAGE_FILE_PATH = "../../../Player/src/main/java/dk/gruppeseks/bodtrd/player/assets/ball_red.png";
+    private static final String PLAYER_IMAGE_PATH = "assets/ball_red.png";
+    private static String PLAYER_IMAGE_TOTAL_PATH = "";
     private Entity _entity;
     private IEntityProcessor _processor;
     private GameData _gameData;
@@ -34,7 +35,9 @@ public class PlayerPlugin implements GamePluginSPI
     {
         Installer.Plugin = this;
 
-        ViewManager.createView(PLAYER_IMAGE_FILE_PATH, false);
+        PLAYER_IMAGE_TOTAL_PATH = PlayerPlugin.class.getResource(PLAYER_IMAGE_PATH).getPath().replace("file:", "");
+
+        ViewManager.createView(PLAYER_IMAGE_TOTAL_PATH, false);
 
         _world = world;
 
@@ -50,7 +53,7 @@ public class PlayerPlugin implements GamePluginSPI
     @Override
     public void stop()
     {
-        ViewManager.removeView(PLAYER_IMAGE_FILE_PATH);
+        ViewManager.removeView(PLAYER_IMAGE_TOTAL_PATH);
 
         _world.removeProcessor(_processor);
         _world.removeEntity(_entity);
@@ -78,7 +81,7 @@ public class PlayerPlugin implements GamePluginSPI
         entity.add(newPosition);
         entity.add(new Body(DIAMETER, DIAMETER, Geometry.CIRCLE));
         entity.add(new Velocity());
-        entity.add(ViewManager.getView(PLAYER_IMAGE_FILE_PATH));
+        entity.add(ViewManager.getView(PLAYER_IMAGE_TOTAL_PATH));
         entity.add(new Health(100, 1));
 
         return entity;
