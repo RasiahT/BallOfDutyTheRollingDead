@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
  *
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class World
 {
     private final Map<Integer, Entity> _entities = new ConcurrentHashMap<>();
-    private final Map<Integer, Set<IEntityProcessor>> _processors = new ConcurrentHashMap<>();
+    private final Map<Integer, Set<IEntityProcessor>> _processors = new ConcurrentSkipListMap<>();
     private final Map<EntityType, Set<IEntityProcessor>> _enthusiasts = new ConcurrentHashMap<>();
     private final GameData _gameData;
     private dk.gruppeseks.bodtrd.common.data.Map _map;
