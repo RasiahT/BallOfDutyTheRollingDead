@@ -1,4 +1,3 @@
-import dk.gruppeseks.bodtrd.common.exceptions.NoPathException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,15 +31,9 @@ public class AIStarPerfTest
                 int startY = (int)(Math.random() * _grid[0].length);
                 int goalX = (int)(Math.random() * _grid.length);
                 int goalY = (int)(Math.random() * _grid[0].length);
-                try
-                {
-                    AStarSearch(startX, startY, goalX, goalY, new boolean[_grid.length][_grid[0].length]);
-                    successes++;
-                }
-                catch (NoPathException e)
-                {
 
-                }
+                AStarSearch(startX, startY, goalX, goalY, new boolean[_grid.length][_grid[0].length]);
+                successes++;
             }
             System.out.println("Average steps with a weight of " + WEIGHT + ": " + count / successes
                     + " grid: " + _grid.length + ", " + _grid[0].length);
@@ -48,7 +41,7 @@ public class AIStarPerfTest
 
     }
 
-    private static List<Node> AStarSearch(int startX, int startY, int goalX, int goalY, boolean[][] explored) throws NoPathException
+    private static List<Node> AStarSearch(int startX, int startY, int goalX, int goalY, boolean[][] explored)
     {
         List<Node> fringe = new ArrayList();
         Node root = new Node(startX, startY, null, 0);
@@ -72,7 +65,7 @@ public class AIStarPerfTest
                 fringe.add(n);
             }
         }
-        throw new NoPathException("No path towards the given point");
+        return null;
     }
 
     private static Node removeBest(List<Node> fringe, int goalX, int goalY)

@@ -26,7 +26,7 @@ public class WeaponPlugin implements GamePluginSPI
 {
     private static final String BULLET_IMAGE_FILE_PATH = "assets/ballblack.png";
     private static final String NINE_MM_SOUND_FILE_PATH = "assets/9mm.mp3";
-    private static final String RELOAD_SOUND_FILE_PATH = "assets/reload.mp3";
+    public static final String RELOAD_SOUND_FILE_PATH = "assets/reload.mp3";
     public static String BULLET_IMAGE_TOTAL_FILE_PATH = "";
     public static String NINE_MM_SOUND_TOTAL_FILE_PATH = "";
     public static String RELOAD_SOUND_TOTAL_FILE_PATH = "";

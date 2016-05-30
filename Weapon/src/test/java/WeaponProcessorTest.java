@@ -16,9 +16,7 @@ import dk.gruppeseks.bodtrd.common.data.entityelements.Position;
 import dk.gruppeseks.bodtrd.common.data.entityelements.Weapon;
 import dk.gruppeseks.bodtrd.common.data.util.Vector2;
 import dk.gruppeseks.bodtrd.common.interfaces.IEntityProcessor;
-import static dk.gruppeseks.bodtrd.weapon.WeaponPlugin.BULLET_IMAGE_FILE_PATH;
-import static dk.gruppeseks.bodtrd.weapon.WeaponPlugin.NINE_MM_SOUND_FILE_PATH;
-import static dk.gruppeseks.bodtrd.weapon.WeaponPlugin.RELOAD_SOUND_FILE_PATH;
+import dk.gruppeseks.bodtrd.weapon.WeaponPlugin;
 import dk.gruppeseks.bodtrd.weapon.WeaponProcessor;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -59,9 +57,9 @@ public class WeaponProcessorTest
         _gameData = new GameData();
         _gameData.setDeltaTime(0.03f);
 
-        ViewManager.createView(BULLET_IMAGE_FILE_PATH, false);
-        AudioManager.createSound(NINE_MM_SOUND_FILE_PATH, AudioType.SOUND);
-        AudioManager.createSound(RELOAD_SOUND_FILE_PATH, AudioType.SOUND);
+        ViewManager.createView(WeaponPlugin.BULLET_IMAGE_TOTAL_FILE_PATH, false);
+        AudioManager.createSound(WeaponPlugin.NINE_MM_SOUND_TOTAL_FILE_PATH, AudioType.SOUND);
+        AudioManager.createSound(WeaponPlugin.RELOAD_SOUND_TOTAL_FILE_PATH, AudioType.SOUND);
 
         _player = new Entity();
         _player.setType(EntityType.PLAYER);
@@ -81,9 +79,10 @@ public class WeaponProcessorTest
         wep.setAttacking(true);
         wep.setReloadSpeed(2);
         wep.setCurrentAmmunition(wep.getMaxAmmunition());
-        wep.setReloadSound(AudioManager.getAudio(RELOAD_SOUND_FILE_PATH));
+        wep.setReloadSound(AudioManager.getAudio(WeaponPlugin.RELOAD_SOUND_TOTAL_FILE_PATH));
 
         _player.add(wep);
+
     }
 
     @After
